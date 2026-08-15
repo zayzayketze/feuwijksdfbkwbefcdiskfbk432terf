@@ -21,16 +21,33 @@
       <header class="topbar">
         <nav class="nav container">
           <div class="brand" aria-label="VoidHaven SMP home">
-            <span class="brand-mark">V</span>
+            <svg class="brand-logo" width="32" height="32" viewBox="0 0 32 32" fill="none">
+              <defs>
+                <linearGradient id="logoGrad" x1="0%y1="0%" x2="100%" y2="100%">
+                  <stop offset="0%" style="stop-color:#7c9cff;stop-opacity:1" />
+                  <stop offset="50%" style="stop-color:#92b0ff;stop-opacity:1" />
+                  <stop offset="100%" style="stop-color:#7ef0d4;stop-opacity:1" />
+                </linearGradient>
+              </defs>
+              <rect x="2" y="2" width="28" height="28" rx="8" fill="url(#logoGrad)" opacity="0.2" stroke="url(#logoGrad)" stroke-width="1.5"/>
+              <path d="M16 8L22 12V20L16 24L10 20V12L16 8Z" fill="url(#logoGrad)" />
+              <circle cx="16" cy="16" r="3" fill="#060b14" />
+            </svg>
             <span>VoidHaven SMP</span>
           </div>
           <div class="nav-links">
             <a href="#about">About</a>
             <a href="#features">Features</a>
             <a href="#community">Community</a>
+            <a href="#faq">FAQ</a>
             <a href="#rules">Rules</a>
           </div>
-          <a class="button button-primary" href="#join">Join Now</a>
+          <div class="nav-actions">
+            <a class="social-link" href="https://discord.gg/voidhaven" target="_blank" aria-label="Discord">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M20.317 4.37a19.8 19.8 0 00-4.885-1.515a.074.074 0 00-.079.037c-.211.375-.445.864-.607 1.25a18.27 18.27 0 00-5.487 0c-.163-.386-.395-.875-.608-1.25a.077.077 0 00-.079-.037A19.763 19.763 0 003.677 4.37a.07.07 0 00-.032.027C.533 9.046-.32 13.58.099 18.057a.082.082 0 00.031.057 19.9 19.9 0 005.993 3.03.08.08 0 00.087-.027c.461-.63.873-1.295 1.226-1.994a.076.076 0 00-.042-.106 13.107 13.107 0 01-1.872-.892.077.077 0 01-.008-.128 10.2 10.2 0 00.372-.294.075.075 0 01.078-.01c3.928 1.793 8.18 1.793 12.062 0a.075.075 0 01.079.009c.12.098.246.198.373.295a.077.077 0 01-.006.127 12.299 12.299 0 01-1.873.892.076.076 0 00-.041.107c.36.699.772 1.365 1.225 1.994a.076.076 0 00.087.028 19.86 19.86 0 006.002-3.03.077.077 0 00.032-.057c.5-4.761-.838-8.895-3.549-12.577a.06.06 0 00-.031-.028zM8.02 15.33c-1.183 0-2.157-.965-2.157-2.156 0-1.193.964-2.157 2.157-2.157 1.193 0 2.156.964 2.156 2.157 0 1.19-.963 2.156-2.156 2.156zm7.975 0c-1.183 0-2.157-.965-2.157-2.156 0-1.193.964-2.157 2.157-2.157 1.193 0 2.157.964 2.157 2.157 0 1.19-.964 2.156-2.157 2.156z"/></svg>
+            </a>
+            <a class="button button-primary" href="#join">Join Now</a>
+          </div>
         </nav>
       </header>
 
@@ -217,13 +234,68 @@
           </div>
         </section>
 
+        <section class="faq section container" id="faq">
+          <div class="section-heading">
+            <p class="eyebrow">Questions?</p>
+            <h2>Frequently asked questions.</h2>
+          </div>
+          <div class="faq-grid">
+            <div class="faq-item">
+              <button class="faq-toggle">
+                <span>How do I apply to join?</span>
+                <span class="toggle-icon">+</span>
+              </button>
+              <div class="faq-content">
+                <p>Applications open monthly. Head to our Discord server and fill out the form in #applications. We review all submissions within 48 hours and prioritize passionate builders and team players.</p>
+           div>
+            <p>© 2026 VoidHaven SMP</p>
+          </div>
+          <div class="footer-links">
+            <a href="#about">About</a>
+            <a href="#features">Features</a>
+            <a href="#faq">FAQ</a>
+            <a href="#rules">Rules</a>
+          </div>
+          <div class="footer-socials">
+            <a href="https://discord.gg/voidhaven" target="_blank" aria-label="Discord" title="Join our Discord">Discorde allowed?</span>
+                <span class="toggle-icon">+</span>
+              </button>
+              <div class="faq-content">
+                <p>We allow client-side optimization mods (Sodium, Iris, etc.) and cosmetic mods only. No cheating mods, X-ray, or gameplay-altering exploits. Full list available in the Discord.</p>
+              </div>
+            </div>
+            <div class="faq-item">
+              <button class="faq-toggle">
+                <span>Is there an age requirement?</span>
+                <span class="toggle-icon">+</span>
+              </button>
+              <div class="faq-content">
+                <p>We recommend players be 13+, though exceptions are made for younger players with active adult supervision. Our community is family-friendly and respectful.</p>
+              </div>
+            </div>
+            <div class="faq-item">
+              <button class="faq-toggle">
+                <span>What's the world reset policy?</span>
+                <span class="toggle-icon">+</span>
+              </button>
+              <div class="faq-content">
+                <p>We run long-term worlds. Server resets happen annually or when consensus is reached by the community. Your builds are always celebrated before any reset.</p>
+              </div>
+            </div>
+          </div>
+        </section>
+
         <section class="join section container" id="join">
           <div class="join-panel">
             <div>
               <p class="eyebrow">Ready to Begin?</p>
               <h2>Step into the Haven.</h2>
+              <p class="join-subtitle">Join our thriving community and start your adventure today.</p>
             </div>
-            <a class="button button-primary" href="mailto:applications@voidhaven-smp.net">Apply Today</a>
+            <div class="join-buttons">
+              <a class="button button-primary" href="mailto:applications@voidhaven-smp.net">Apply Today</a>
+              <a class="button button-secondary" href="https://discord.gg/voidhaven" target="_blank">Join Discord</a>
+            </div>
           </div>
         </section>
       </main>
