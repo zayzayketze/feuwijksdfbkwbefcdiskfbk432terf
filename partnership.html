@@ -1,0 +1,387 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta
+      name="description"
+      content="Submit a partnership request to VoidHaven SMP and send it directly to the team Discord webhook."
+    />
+    <title>Partnership Requests - VoidHaven SMP</title>
+    <link rel="icon" type="image/webp" href="https://cdn.discordapp.com/icons/1477464933179588880/a_a061556c7f7e320ceaf1b7c1519636a6.webp?size=1024&animated=true" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="styles.css" />
+    <style>
+      .partnership-hero {
+        padding-top: 72px;
+        padding-bottom: 32px;
+      }
+
+      .partnership-layout {
+        display: grid;
+        grid-template-columns: 1.05fr 1.2fr;
+        gap: 28px;
+        align-items: start;
+      }
+
+      .partnership-summary,
+      .partnership-form-card {
+        position: relative;
+        overflow: hidden;
+        border: 1px solid rgba(255, 255, 255, 0.06);
+        border-left: 4px solid #7c3aed;
+        border-radius: 18px;
+        background: linear-gradient(180deg, rgba(37, 38, 48, 0.96), rgba(26, 28, 36, 0.98));
+        box-shadow: 0 18px 40px rgba(15, 23, 42, 0.18);
+      }
+
+      .partnership-summary {
+        padding: 28px 24px;
+      }
+
+      .partnership-summary h2,
+      .partnership-form-card h2 {
+        margin: 0 0 14px;
+        font-size: clamp(2rem, 4vw, 2.6rem);
+      }
+
+      .partnership-summary p,
+      .partnership-form-card p,
+      .partnership-form-card label {
+        color: #dfe7f5;
+        line-height: 1.75;
+      }
+
+      .summary-list {
+        list-style: none;
+        margin: 24px 0 0;
+        padding: 0;
+        display: grid;
+        gap: 14px;
+      }
+
+      .summary-list li {
+        position: relative;
+        padding-left: 18px;
+        color: #dfe7f5;
+        line-height: 1.6;
+      }
+
+      .summary-list li::before {
+        content: "";
+        position: absolute;
+        left: 0;
+        top: 10px;
+        width: 8px;
+        height: 8px;
+        border-radius: 50%;
+        background: linear-gradient(135deg, #a78bfa, #d8b4fe);
+      }
+
+      .partnership-form-card {
+        padding: 28px 24px;
+      }
+
+      .form-grid {
+        display: grid;
+        gap: 18px;
+      }
+
+      .field-group {
+        display: grid;
+        gap: 8px;
+      }
+
+      .field-group label {
+        font-weight: 600;
+        color: #e9d5ff;
+      }
+
+      .field-input,
+      .field-select,
+      .field-textarea {
+        width: 100%;
+        border: 1px solid rgba(255, 255, 255, 0.08);
+        background: rgba(15, 23, 42, 0.72);
+        border-radius: 12px;
+        color: #f8fafc;
+        padding: 0.9rem 1rem;
+        font: inherit;
+        transition: border-color 0.2s ease, box-shadow 0.2s ease;
+      }
+
+      .field-input:focus,
+      .field-select:focus,
+      .field-textarea:focus {
+        outline: none;
+        border-color: rgba(168, 139, 250, 0.8);
+        box-shadow: 0 0 0 3px rgba(124, 58, 237, 0.18);
+      }
+
+      .field-textarea {
+        min-height: 120px;
+        resize: vertical;
+      }
+
+      .field-hint {
+        color: #9ca3af;
+        font-size: 0.82rem;
+      }
+
+      .form-actions {
+        display: flex;
+        align-items: center;
+        gap: 16px;
+        margin-top: 4px;
+      }
+
+      .submit-button[disabled] {
+        opacity: 0.72;
+        cursor: wait;
+      }
+
+      .status-message {
+        min-height: 1.5em;
+        font-weight: 600;
+      }
+
+      .status-message.success {
+        color: #bbf7d0;
+      }
+
+      .status-message.error {
+        color: #fecaca;
+      }
+
+      @media (max-width: 900px) {
+        .partnership-layout {
+          grid-template-columns: 1fr;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="page-shell">
+      <header class="topbar">
+        <nav class="nav container">
+          <a href="index.html" class="brand" aria-label="VoidHaven SMP home">
+            <img class="brand-logo" src="https://cdn.discordapp.com/icons/1477464933179588880/a_a061556c7f7e320ceaf1b7c1519636a6.webp?size=1024&animated=true" alt="VoidHaven SMP logo" width="32" height="32" />
+            <span>VOIDHAVEN</span>
+          </a>
+          <div class="nav-links">
+            <a href="index.html">Home</a>
+            <a href="about.html">About</a>
+            <a href="features.html">Features</a>
+            <a href="community.html">Community</a>
+            <a href="staff.html">Staff</a>
+            <a href="faq.html">FAQ</a>
+            <a href="rules.html">Rules</a>
+            <a href="join.html">Join</a>
+          </div>
+          <div class="nav-actions">
+            <a class="social-link" href="https://discord.gg/voidhavensmp" target="_blank" aria-label="Discord">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M20.317 4.37a19.8 19.8 0 00-4.885-1.515a.074.074 0 00-.079.037c-.211.375-.445.864-.607 1.25a18.27 18.27 0 00-5.487 0c-.163-.386-.395-.875-.608-1.25a.077.077 0 00-.079-.037A19.763 19.763 0 003.677 4.37a.07.07 0 00-.032.027C.533 9.046-.32 13.58.099 18.057a.082.082 0 00.031.057 19.9 19.9 0 005.993 3.03.08.08 0 00.087-.027c.461-.63.873-1.295 1.226-1.994a.076.076 0 00-.042-.106 13.107 13.107 0 01-1.872-.892.077.077 0 01-.008-.128 10.2 10.2 0 00.372-.294.075.075 0 01.078-.01c3.928 1.793 8.18 1.793 12.062 0a.075.075 0 01.079.009c.12.098.246.198.373.295a.077.077 0 01-.006.127 12.299 12.299 0 01-1.873.892.076.076 0 00-.041.107c.36.699.772 1.365 1.225 1.994a.076.076 0 00.087.028 19.86 19.86 0 006.002-3.03.077.077 0 00.032-.057c.5-4.761-.838-8.895-3.549-12.577a.06.06 0 00-.031-.028zM8.02 15.33c-1.183 0-2.157-.965-2.157-2.156 0-1.193.964-2.157 2.157-2.157 1.193 0 2.156.964 2.156 2.157 0 1.19-.963 2.156-2.156 2.156zm7.975 0c-1.183 0-2.157-.965-2.157-2.156 0-1.193.964-2.157 2.157-2.157 1.193 0 2.157.964 2.157 2.157 0 1.19-.964 2.156-2.157 2.156z"/></svg>
+            </a>
+            <a class="button button-primary" href="join.html">Join Now</a>
+          </div>
+        </nav>
+      </header>
+
+      <main>
+        <section class="partnership-hero section container">
+          <div class="partnership-layout">
+            <div class="partnership-summary">
+              <p class="eyebrow">Partnerships</p>
+              <h2>Apply to work with VoidHaven.</h2>
+              <p>
+                We partner with communities that care about quality, safety, and a positive experience for everyone.
+                Fill out the form below and our team will review your submission.
+              </p>
+              <ul class="summary-list">
+                <li>We review server standards, community safety, and rule compliance.</li>
+                <li>We value transparency, stable communities, and respectful partnerships.</li>
+                <li>We may revoke a partnership if Discord ToS or community standards are broken.</li>
+              </ul>
+            </div>
+
+            <div class="partnership-form-card">
+              <p class="eyebrow">Partnership Request</p>
+              <h2>Submit your server details</h2>
+              <form id="partnership-form">
+                <div class="form-grid">
+                  <div class="field-group">
+                    <label for="discordUsername">What is your discord username?</label>
+                    <input id="discordUsername" name="discordUsername" class="field-input" type="text" required />
+                  </div>
+
+                  <div class="field-group">
+                    <label for="serverName">What is your servers name?</label>
+                    <input id="serverName" name="serverName" class="field-input" type="text" required />
+                  </div>
+
+                  <div class="field-group">
+                    <label for="serverInvite">What is the invite link to the server you would like to partner with us?</label>
+                    <input id="serverInvite" name="serverInvite" class="field-input" type="url" placeholder="https://discord.gg/..." required />
+                  </div>
+
+                  <div class="field-group">
+                    <label for="nsfwPrivate">does your server have any private nsfw channels or applications?</label>
+                    <select id="nsfwPrivate" name="nsfwPrivate" class="field-select" required>
+                      <option value="">Select an answer</option>
+                      <option value="Yes">Yes</option>
+                      <option value="No">No</option>
+                    </select>
+                  </div>
+
+                  <div class="field-group">
+                    <label for="priorRaid">does your server have any previous events where it has been raided/nuked?</label>
+                    <select id="priorRaid" name="priorRaid" class="field-select" required>
+                      <option value="">Select an answer</option>
+                      <option value="Yes">Yes</option>
+                      <option value="No">No</option>
+                    </select>
+                  </div>
+
+                  <div class="field-group">
+                    <label for="pingAgreement">do you agree to do an @e ping and we do our partner ping if your server is below 100 members?</label>
+                    <select id="pingAgreement" name="pingAgreement" class="field-select" required>
+                      <option value="">Select an answer</option>
+                      <option value="Yes">Yes</option>
+                      <option value="No">No</option>
+                    </select>
+                  </div>
+
+                  <div class="field-group">
+                    <label for="tosFollow">does your server follow discord tos?</label>
+                    <select id="tosFollow" name="tosFollow" class="field-select" required>
+                      <option value="">Select an answer</option>
+                      <option value="Yes">Yes</option>
+                      <option value="No">No</option>
+                    </select>
+                  </div>
+
+                  <div class="field-group">
+                    <label for="tosViolations">has anyone in your server broken discord tos in the past?</label>
+                    <select id="tosViolations" name="tosViolations" class="field-select" required>
+                      <option value="">Select an answer</option>
+                      <option value="Yes">Yes</option>
+                      <option value="No">No</option>
+                    </select>
+                  </div>
+
+                  <div class="field-group">
+                    <label for="partnershipRevocation">do you agree that if anything broken and/or something happens against discord tos that your partnership will be revoked and this server will be blacklisted from partnering with us ever again?</label>
+                    <select id="partnershipRevocation" name="partnershipRevocation" class="field-select" required>
+                      <option value="">Select an answer</option>
+                      <option value="Yes">Yes</option>
+                      <option value="No">No</option>
+                    </select>
+                  </div>
+
+                  <div class="field-group">
+                    <label for="dedicatedChannel">do you agree to put us in a dedicated channel made for VoidHaven?</label>
+                    <select id="dedicatedChannel" name="dedicatedChannel" class="field-select" required>
+                      <option value="">Select an answer</option>
+                      <option value="Yes">Yes</option>
+                      <option value="No">No</option>
+                    </select>
+                  </div>
+                </div>
+
+                <div class="form-actions">
+                  <button class="button button-primary submit-button" type="submit">Submit Request</button>
+                  <span id="statusMessage" class="status-message" aria-live="polite"></span>
+                </div>
+              </form>
+            </div>
+          </div>
+        </section>
+      </main>
+
+      <footer class="footer">
+        <div class="container footer-inner">
+          <p>© 2026 VoidHaven SMP</p>
+          <div class="footer-links">
+            <a href="index.html">Home</a>
+            <a href="about.html">About</a>
+            <a href="features.html">Features</a>
+            <a href="community.html">Community</a>
+            <a href="staff.html">Staff</a>
+            <a href="faq.html">FAQ</a>
+            <a href="rules.html">Rules</a>
+            <a href="join.html">Join</a>
+          </div>
+        </div>
+      </footer>
+    </div>
+
+    <script>
+      const DISCORD_WEBHOOK_URL = 'https://discord.com/api/webhooks/1538614393623805962/dQ0uwutc0wUiivKuKVt847KifNhESn0T7EJZmvYv8V2b80JUDagNi01LQ57NAl5u1zog';
+      const form = document.getElementById('partnership-form');
+      const statusMessage = document.getElementById('statusMessage');
+      const submitButton = form.querySelector('.submit-button');
+
+      form.addEventListener('submit', async (event) => {
+        event.preventDefault();
+
+        const formFields = Array.from(form.querySelectorAll('input, select'));
+        const payloadFields = formFields
+          .filter((field) => field.name && field.value.trim() !== '')
+          .map((field) => ({
+            name: field.closest('.field-group')?.querySelector('label')?.textContent?.trim() || field.name,
+            value: field.value.trim(),
+          }));
+
+        submitButton.disabled = true;
+        submitButton.textContent = 'Sending...';
+        statusMessage.textContent = '';
+        statusMessage.className = 'status-message';
+
+        try {
+          const response = await fetch(DISCORD_WEBHOOK_URL, {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+              username: 'VoidHaven Partnership Requests',
+              avatar_url: 'https://cdn.discordapp.com/icons/1477464933179588880/a_a061556c7f7e320ceaf1b7c1519636a6.webp?size=1024&animated=true',
+              embeds: [
+                {
+                  title: 'New Partnership Request',
+                  description: 'A new partnership application has been submitted.',
+                  color: 0x7c3aed,
+                  fields: payloadFields.map((field) => ({
+                    name: field.name,
+                    value: String(field.value).slice(0, 1024),
+                  })),
+                  timestamp: new Date().toISOString(),
+                },
+              ],
+            }),
+          });
+
+          if (!response.ok) {
+            throw new Error('Webhook request failed.');
+          }
+
+          statusMessage.textContent = 'Your partnership request has been submitted successfully.';
+          statusMessage.classList.add('success');
+          form.reset();
+        } catch (error) {
+          statusMessage.textContent = 'Something went wrong while sending your request. Please try again or contact us directly.';
+          statusMessage.classList.add('error');
+          console.error(error);
+        } finally {
+          submitButton.disabled = false;
+          submitButton.textContent = 'Submit Request';
+        }
+      });
+    </script>
+  </body>
+</html>
