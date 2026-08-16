@@ -1,6 +1,6 @@
 document.addEventListener('DOMContentLoaded', () => {
+  // FAQ Toggle Functionality
   const faqToggles = document.querySelectorAll('.faq-toggle');
-
   faqToggles.forEach((toggle) => {
     toggle.addEventListener('click', () => {
       const faqItem = toggle.parentElement;
@@ -16,10 +16,76 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   });
 
+  // Brand Logo - Scroll to Top
   const brand = document.querySelector('.brand');
   if (brand) {
     brand.addEventListener('click', () => {
       window.scrollTo({ top: 0, behavior: 'smooth' });
     });
   }
+
+  // Navigation Link Highlighting
+  const navLinks = document.querySelectorAll('.nav-links a');
+  window.addEventListener('scroll', () => {
+    updateActiveNavLink();
+  });
+
+  function updateActiveNavLink() {
+    const scrollPosition = window.scrollY + 100;
+
+    navLinks.forEach((link) => {
+      const href = link.getAttribute('href');
+      if (href.startsWith('#')) {
+        const sectionId = href.substring(1);
+        const section = document.getElementById(sectionId);
+
+        if (section) {
+          const sectionTop = section.offsetTop;
+          const sectionBottom = sectionTop + section.offsetHeight;
+
+          if (scrollPosition >= sectionTop && scrollPosition < sectionBottom) {
+            navLinks.forEach((l) => l.style.color = 'var(--muted)');
+            link.style.color = 'var(--accent)';
+          }
+        }
+      }
+    });
+  }
+
+  // Smooth scroll behavior for navigation links
+  document.querySelectorAll('a[href^="#"]').forEach((anchor) => {
+    anchor.addEventListener('click', function (e) {
+      const href = this.getAttribute('href');
+      if (href !== '#' && href !== '#join') {
+        e.preventDefault();
+        const target = document.querySelector(href);
+        if (target) {
+          target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+      }
+    });
+  });
+
+  // Add scroll animation class to elements
+  const observerOptions = {
+    threshold: 0.1,
+    rootMargin: '0px 0px -100px 0px'
+  };
+
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach((entry) => {
+      if (entry.isIntersecting) {
+        entry.target.style.opacity = '1';
+        entry.target.style.transform = 'translateY(0)';
+      }
+    });
+  }, observerOptions);
+
+  // Observe feature cards and other elements
+  document.querySelectorAll('.feature-card, .rule-item, .faq-item').forEach((el) => {
+    el.style.opacity = '0';
+    el.style.transform = 'translateY(20px)';
+    el.style.transition = 'all 0.6s ease';
+    observer.observe(el);
+  });
 });
