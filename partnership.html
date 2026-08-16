@@ -322,6 +322,7 @@
       </footer>
     </div>
 
+    <script src="script.js"></script>
     <script>
       const DISCORD_WEBHOOK_URL = 'https://discord.com/api/webhooks/1538614393623805962/dQ0uwutc0wUiivKuKVt847KifNhESn0T7EJZmvYv8V2b80JUDagNi01LQ57NAl5u1zog';
       const form = document.getElementById('partnership-form');
@@ -357,7 +358,7 @@
               embeds: [
                 {
                   title: 'New Partnership Request',
-                  description: 'A new partnership application has been submitted.',
+                  description: 'A new partnership application has been submitted from the website.',
                   color: 0x7c3aed,
                   fields: payloadFields.map((field) => ({
                     name: field.name,
@@ -371,6 +372,14 @@
 
           if (!response.ok) {
             throw new Error('Webhook request failed.');
+          }
+
+          if (window.voidHavenLog) {
+            window.voidHavenLog('partnership_submitted', {
+              message: 'A partnership request was submitted from the website.',
+              server_name: document.getElementById('serverName')?.value || 'unknown',
+              user: document.getElementById('discordUsername')?.value || 'unknown',
+            });
           }
 
           statusMessage.textContent = 'Your partnership request has been submitted successfully.';

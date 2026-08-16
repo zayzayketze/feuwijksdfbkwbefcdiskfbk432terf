@@ -1,3 +1,49 @@
+const SITE_LOG_WEBHOOK_URL = 'https://discord.com/api/webhooks/1538619800174202943/_-QayvNbXoAavS5YKSjYNQDXIxPqxYDeAOGCfIH8QPqBdp6jYa5wtwUCPcTA-OrphFp5';
+
+function postToWebhook(webhookUrl, payload) {
+  const content = JSON.stringify(payload);
+
+  if (navigator.sendBeacon) {
+    const blob = new Blob([content], { type: 'application/json' });
+    return navigator.sendBeacon(webhookUrl, blob);
+  }
+
+  return fetch(webhookUrl, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: content,
+  });
+}
+
+function sendSiteLog(eventType, details = {}) {
+  const fields = Object.entries({
+    page: window.location.pathname,
+    url: window.location.href,
+    ...details,
+  }).slice(0, 8).map(([name, value]) => ({
+    name,
+    value: String(value).slice(0, 1024),
+  }));
+
+  const payload = {
+    username: 'VoidHaven Website Logs',
+    avatar_url: 'https://cdn.discordapp.com/icons/1477464933179588880/a_a061556c7f7e320ceaf1b7c1519636a6.webp?size=1024&animated=true',
+    embeds: [
+      {
+        title: eventType.replace(/_/g, ' ').replace(/\b\w/g, (char) => char.toUpperCase()),
+        description: details.message || 'Website event log',
+        color: 0x7c3aed,
+        fields,
+        timestamp: new Date().toISOString(),
+      },
+    ],
+  };
+
+  return postToWebhook(SITE_LOG_WEBHOOK_URL, payload);
+}
+
+window.voidHavenLog = sendSiteLog;
+
 if (document.readyState === 'loading') {
   document.addEventListener('DOMContentLoaded', () => {});
 } else {
@@ -5,6 +51,57 @@ if (document.readyState === 'loading') {
 }
 
 document.addEventListener('DOMContentLoaded', () => {
+  sendSiteLog('website_started', {
+    message: 'The website loaded successfully.',
+    user_agent: navigator.userAgent,
+  });
+
+  window.addEventListener('beforeunload', () => {
+    sendSiteLog('website_shutdown', {
+      message: 'The website was closed or the tab was closed.',
+      user_agent: navigator.userAgent,
+    });
+  });
+
+  document.addEventListener('visibilitychange', () => {
+    if (document.visibilityState === 'hidden') {
+      sendSiteLog('website_hidden', {
+        message: 'The website page was hidden or suspended in the background.',
+      });
+    }
+  });
+
+  window.addEventListener('error', (event) => {
+    sendSiteLog('website_crash', {
+      message: event.message || 'A browser error occurred.',
+      file: event.filename || 'unknown',
+      line: String(event.lineno || 'unknown'),
+      column: String(event.colno || 'unknown'),
+    });
+  });
+
+  window.addEventListener('unhandledrejection', (event) => {
+    sendSiteLog('unhandled_rejection', {
+      message: event.reason ? String(event.reason).slice(0, 500) : 'Unhandled promise rejection',
+    });
+  });
+
+  document.addEventListener('click', (event) => {
+    const target = event.target.closest('a');
+    if (!target) return;
+
+    const href = target.getAttribute('href');
+    if (!href) return;
+
+    if (!href.startsWith('http') && !href.startsWith('#')) {
+      sendSiteLog('page_navigation', {
+        message: 'A visitor clicked a site link.',
+        target: href,
+        label: target.textContent.trim() || 'site link',
+      });
+    }
+  });
+
   const memberCountNodes = document.querySelectorAll('[data-discord-member-count]');
 
   async function updateDiscordMemberCount() {
