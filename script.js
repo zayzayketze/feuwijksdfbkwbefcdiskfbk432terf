@@ -542,36 +542,46 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const googleButton = document.getElementById('google-signin-button');
     if (googleButton) {
-      const clientId = document.querySelector('meta[name="google-signin-client_id"]')?.getAttribute('content') || '';
-      if (clientId) {
-        window.google?.accounts?.id?.initialize({
-          client_id: clientId,
-          callback: async (response) => {
-            try {
-              const result = await apiFetch('/api/auth/google', {
-                method: 'POST',
-                body: JSON.stringify({ credential: response.credential }),
-              });
-              setSession(result.user, result.token);
-              await renderAuthState();
-            } catch (error) {
-              const message = document.getElementById('login-status');
-              if (message) {
-                message.textContent = error.message;
-              }
-            }
-          },
-        });
+      fetch('/api/config')
+        .then((response) => response.json())
+        .then((config) => {
+          const clientId = config.googleClientId || '';
+          if (!clientId) {
+            googleButton.innerHTML = '<div class="status-text">Google sign-in is not configured yet. Add your client ID to .env.</div>';
+            return;
+          }
 
-        window.google.accounts.id.renderButton(googleButton, {
-          theme: 'outline',
-          size: 'large',
-          text: 'continue_with',
-          shape: 'pill',
+          if (window.google?.accounts?.id) {
+            window.google.accounts.id.initialize({
+              client_id: clientId,
+              callback: async (response) => {
+                try {
+                  const result = await apiFetch('/api/auth/google', {
+                    method: 'POST',
+                    body: JSON.stringify({ credential: response.credential }),
+                  });
+                  setSession(result.user, result.token);
+                  await renderAuthState();
+                } catch (error) {
+                  const message = document.getElementById('login-status');
+                  if (message) {
+                    message.textContent = error.message;
+                  }
+                }
+              },
+            });
+
+            window.google.accounts.id.renderButton(googleButton, {
+              theme: 'outline',
+              size: 'large',
+              text: 'continue_with',
+              shape: 'pill',
+            });
+          }
+        })
+        .catch(() => {
+          googleButton.innerHTML = '<div class="status-text">Google sign-in could not be loaded from the server config.</div>';
         });
-      } else {
-        googleButton.innerHTML = '<div class="status-text">Add your Google Client ID in the page head to enable Google sign in.</div>';
-      }
     }
 
     renderAuthState();

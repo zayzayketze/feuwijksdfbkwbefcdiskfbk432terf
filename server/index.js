@@ -48,6 +48,13 @@ app.get('/api/health', (req, res) => {
   res.json({ ok: true, service: 'voidhaven-auth-bot-hosting' });
 });
 
+app.get('/api/config', (req, res) => {
+  res.json({
+    googleClientId: GOOGLE_CLIENT_ID || '',
+    frontendUrl: FRONTEND_URL,
+  });
+});
+
 app.post('/api/auth/google', async (req, res) => {
   const { credential } = req.body || {};
 
