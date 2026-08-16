@@ -576,8 +576,9 @@ a {
   gap: 20px;
 }
 
-.discord-rule-card,
-.rule-item,
+.server-card,
+.cta-panel,
+.cta-box,
 .feature-card,
 .highlight-card,
 .detail-card,
@@ -588,18 +589,22 @@ a {
 .testimonial-card,
 .consequence-card,
 .community-panel,
-.quote-card {
+.quote-card,
+.discord-rule-card,
+.rule-item {
   position: relative;
-  border: 1px solid rgba(88, 101, 242, 0.28);
-  border-left: 4px solid rgba(88, 101, 242, 0.9);
-  border-radius: 18px;
-  background: linear-gradient(180deg, rgba(47, 49, 54, 0.92), rgba(35, 39, 42, 0.96));
-  box-shadow: 0 12px 24px rgba(0, 0, 0, 0.24);
   overflow: hidden;
+  border: 1px solid rgba(113, 128, 255, 0.22);
+  border-left: 4px solid rgba(113, 128, 255, 0.95);
+  border-radius: 18px;
+  background: linear-gradient(180deg, rgba(47, 49, 54, 0.96), rgba(35, 39, 42, 0.98));
+  box-shadow: 0 12px 26px rgba(0, 0, 0, 0.22);
+  transition: transform 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
 }
 
-.discord-rule-card::before,
-.rule-item::before,
+.server-card::before,
+.cta-panel::before,
+.cta-box::before,
 .feature-card::before,
 .highlight-card::before,
 .detail-card::before,
@@ -610,12 +615,82 @@ a {
 .testimonial-card::before,
 .consequence-card::before,
 .community-panel::before,
-.quote-card::before {
+.quote-card::before,
+.discord-rule-card::before,
+.rule-item::before {
   content: "";
   position: absolute;
   inset: 0;
-  background: linear-gradient(90deg, rgba(88, 101, 242, 0.08), transparent 30%);
+  background: linear-gradient(90deg, rgba(113, 128, 255, 0.08), transparent 32%);
   pointer-events: none;
+}
+
+.server-card:hover,
+.cta-panel:hover,
+.cta-box:hover,
+.feature-card:hover,
+.highlight-card:hover,
+.detail-card:hover,
+.step-card:hover,
+.info-card:hover,
+.requirement-list:hover,
+.contact-card:hover,
+.testimonial-card:hover,
+.consequence-card:hover,
+.community-panel:hover,
+.quote-card:hover,
+.discord-rule-card:hover,
+.rule-item:hover {
+  transform: translateY(-2px);
+  border-color: rgba(126, 240, 212, 0.32);
+  box-shadow: 0 16px 30px rgba(0, 0, 0, 0.26);
+}
+
+.server-card,
+.cta-panel,
+.cta-box,
+.feature-card,
+.highlight-card,
+.detail-card,
+.step-card,
+.info-card,
+.requirement-list,
+.contact-card,
+.testimonial-card,
+.consequence-card,
+.community-panel,
+.quote-card,
+.discord-rule-card,
+.rule-item,
+.join-panel {
+  padding: 22px 20px;
+}
+
+.server-card {
+  padding: 0;
+}
+
+.server-card .card-topline,
+.server-card .card-content,
+.server-card .stat-grid,
+.server-card h3,
+.server-card p,
+.server-card span,
+.feature-card > *,
+.highlight-card > *,
+.detail-card > *,
+.step-card > *,
+.info-card > *,
+.requirement-list > *,
+.contact-card > *,
+.testimonial-card > *,
+.consequence-card > *,
+.community-panel > *,
+.quote-card > *,
+.discord-rule-card > *,
+.rule-item > * {
+  position: relative;
+  z-index: 1;
 }
 
 .discord-rule-card {
@@ -628,7 +703,7 @@ a {
   justify-content: space-between;
   gap: 12px;
   margin-bottom: 12px;
-  color: rgba(255, 255, 255, 0.76);
+  color: rgba(255, 255, 255, 0.72);
   font-size: 0.7rem;
   letter-spacing: 0.12em;
   text-transform: uppercase;
@@ -638,30 +713,38 @@ a {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  min-width: 36px;
+  min-width: 34px;
   height: 24px;
   padding: 0 8px;
   border-radius: 999px;
-  background: rgba(88, 101, 242, 0.22);
-  color: #b9c3ff;
+  background: rgba(113, 128, 255, 0.22);
+  color: #c5d2ff;
   font-weight: 700;
   letter-spacing: 0.08em;
 }
 
 .discord-rule-card h3,
 .rule-item h3 {
-  position: relative;
-  z-index: 1;
   margin: 0 0 10px;
   font-size: 1.2rem;
 }
 
 .discord-rule-card p,
-.rule-item p {
-  position: relative;
-  z-index: 1;
+.rule-item p,
+.feature-card p,
+.highlight-card p,
+.detail-card p,
+.step-card p,
+.info-card p,
+.requirement-list li,
+.contact-card p,
+.testimonial-card p,
+.consequence-card p,
+.community-panel p,
+.quote-card p,
+.join-subtitle {
   margin: 0;
-  color: #d9e3f0;
+  color: #dfe7f5;
   line-height: 1.75;
 }
 
@@ -674,12 +757,6 @@ a {
 .join-panel h2 {
   font-size: clamp(2rem, 4vw, 3.1rem);
   margin-bottom: 8px;
-}
-
-.join-subtitle {
-  color: var(--muted);
-  margin: 0;
-  font-size: 1.05rem;
 }
 
 .rule-item span {
