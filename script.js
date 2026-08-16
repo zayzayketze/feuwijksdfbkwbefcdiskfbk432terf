@@ -1,4 +1,4 @@
-const SITE_LOG_WEBHOOK_URL = 'https://discord.com/api/webhooks/1538619800174202943/_-QayvNbXoAavS5YKSjYNQDXIxPqxYDeAOGCfIH8QPqBdp6jYa5wtwUCPcTA-OrphFp5';
+const SITE_STATUS_WEBHOOK_URL = 'https://discord.com/api/webhooks/1538620652645384344/sizlM1XcNQxitPs1UNYg22Rrhl_Id0fhpeNBbaFugOM4t2REXirGzdgWZSEvdaD84k7r';
 
 function postToWebhook(webhookUrl, payload) {
   const content = JSON.stringify(payload);
@@ -15,34 +15,29 @@ function postToWebhook(webhookUrl, payload) {
   });
 }
 
-function sendSiteLog(eventType, details = {}) {
-  const fields = Object.entries({
-    page: window.location.pathname,
-    url: window.location.href,
-    ...details,
-  }).slice(0, 8).map(([name, value]) => ({
-    name,
-    value: String(value).slice(0, 1024),
-  }));
-
+function sendWebsiteStatus(status, message = '') {
   const payload = {
-    username: 'VoidHaven Website Logs',
+    username: 'VoidHaven Site Status',
     avatar_url: 'https://cdn.discordapp.com/icons/1477464933179588880/a_a061556c7f7e320ceaf1b7c1519636a6.webp?size=1024&animated=true',
     embeds: [
       {
-        title: eventType.replace(/_/g, ' ').replace(/\b\w/g, (char) => char.toUpperCase()),
-        description: details.message || 'Website event log',
-        color: 0x7c3aed,
-        fields,
+        title: status === 'online' ? 'Website Online' : 'Website Offline',
+        description: message || (status === 'online' ? 'The website is currently online and reachable.' : 'The website is currently offline or unreachable.'),
+        color: status === 'online' ? 0x22c55e : 0xef4444,
+        fields: [
+          { name: 'Status', value: status.toUpperCase() },
+          { name: 'Page', value: window.location.href.slice(0, 1024) },
+          { name: 'Time', value: new Date().toISOString() },
+        ],
         timestamp: new Date().toISOString(),
       },
     ],
   };
 
-  return postToWebhook(SITE_LOG_WEBHOOK_URL, payload);
+  return postToWebhook(SITE_STATUS_WEBHOOK_URL, payload);
 }
 
-window.voidHavenLog = sendSiteLog;
+window.voidHavenStatus = sendWebsiteStatus;
 
 if (document.readyState === 'loading') {
   document.addEventListener('DOMContentLoaded', () => {});
@@ -51,55 +46,14 @@ if (document.readyState === 'loading') {
 }
 
 document.addEventListener('DOMContentLoaded', () => {
-  sendSiteLog('website_started', {
-    message: 'The website loaded successfully.',
-    user_agent: navigator.userAgent,
+  sendWebsiteStatus('online', 'The website is online.');
+
+  window.addEventListener('offline', () => {
+    sendWebsiteStatus('offline', 'The website went offline in the browser context.');
   });
 
-  window.addEventListener('beforeunload', () => {
-    sendSiteLog('website_shutdown', {
-      message: 'The website was closed or the tab was closed.',
-      user_agent: navigator.userAgent,
-    });
-  });
-
-  document.addEventListener('visibilitychange', () => {
-    if (document.visibilityState === 'hidden') {
-      sendSiteLog('website_hidden', {
-        message: 'The website page was hidden or suspended in the background.',
-      });
-    }
-  });
-
-  window.addEventListener('error', (event) => {
-    sendSiteLog('website_crash', {
-      message: event.message || 'A browser error occurred.',
-      file: event.filename || 'unknown',
-      line: String(event.lineno || 'unknown'),
-      column: String(event.colno || 'unknown'),
-    });
-  });
-
-  window.addEventListener('unhandledrejection', (event) => {
-    sendSiteLog('unhandled_rejection', {
-      message: event.reason ? String(event.reason).slice(0, 500) : 'Unhandled promise rejection',
-    });
-  });
-
-  document.addEventListener('click', (event) => {
-    const target = event.target.closest('a');
-    if (!target) return;
-
-    const href = target.getAttribute('href');
-    if (!href) return;
-
-    if (!href.startsWith('http') && !href.startsWith('#')) {
-      sendSiteLog('page_navigation', {
-        message: 'A visitor clicked a site link.',
-        target: href,
-        label: target.textContent.trim() || 'site link',
-      });
-    }
+  window.addEventListener('online', () => {
+    sendWebsiteStatus('online', 'The website is back online.');
   });
 
   const memberCountNodes = document.querySelectorAll('[data-discord-member-count]');
