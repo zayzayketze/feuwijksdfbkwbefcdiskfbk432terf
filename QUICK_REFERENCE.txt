@@ -1,0 +1,140 @@
+╔════════════════════════════════════════════════════════════════════╗
+║     VPS BOT HOSTING - QUICK REFERENCE CARD                         ║
+╚════════════════════════════════════════════════════════════════════╝
+
+┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓
+┃ 1️⃣  GENERATE AUTH TOKEN                                          ┃
+┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛
+
+openssl rand -base64 32
+
+Example output: aBc123XYZ+/=...
+
+┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓
+┃ 2️⃣  UPDATE WEBSITE .env                                          ┃
+┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛
+
+VPS_ENABLED=true
+VPS_HOST=your-vps-ip-or-domain
+VPS_PORT=5000
+VPS_AUTH_TOKEN=your-generated-token
+VPS_PROTOCOL=http
+
+Example:
+VPS_ENABLED=true
+VPS_HOST=123.45.67.89
+VPS_PORT=5000
+VPS_AUTH_TOKEN=aBc123XYZ+/=...
+VPS_PROTOCOL=http
+
+┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓
+┃ 3️⃣  COPY FILES TO VPS                                            ┃
+┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛
+
+Files to copy to your VPS:
+  • vps-worker-template.js  → ~/voidhaven-bots/
+  • .env.vps.example        → ~/voidhaven-bots/.env
+
+┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓
+┃ 4️⃣  CREATE VPS .env                                              ┃
+┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛
+
+SSH to VPS and create:
+  ~/voidhaven-bots/.env
+
+Contents:
+  VPS_PORT=5000
+  VPS_AUTH_TOKEN=aBc123XYZ+/=...
+
+⚠️  AUTH TOKEN MUST MATCH WEBSITE!
+
+┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓
+┃ 5️⃣  INSTALL & START ON VPS                                       ┃
+┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛
+
+cd ~/voidhaven-bots
+npm init -y
+npm install express discord.js dotenv
+node vps-worker-template.js
+
+Output:
+  VPS Worker running on port 5000
+  Auth token: aBc1...
+  Ready to receive bot deployment commands
+
+┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓
+┃ 6️⃣  RESTART WEBSITE                                              ┃
+┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛
+
+npm start
+
+Website should be running on http://localhost:3000
+
+┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓
+┃ 7️⃣  TEST IT!                                                     ┃
+┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛
+
+1. Sign in to website
+2. Go to Bots page
+3. Enter a Discord bot token
+4. Select modules
+5. Click "Host Bot"
+
+Bot should:
+  ✓ Be added to dashboard
+  ✓ Show "online" status
+  ✓ Start running on VPS
+
+Check VPS logs:
+  [Deploy] Bot abc-123 deployed successfully
+  [Bot abc-123] Ready as YourBotName#1234
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+🔧 TROUBLESHOOTING
+
+Problem: "VPS connection failed"
+→ Check VPS_HOST is correct (not localhost for remote)
+→ Check port 5000 is open on VPS firewall
+→ Test: curl http://VPS-IP:5000/api/health
+
+Problem: "Invalid bot token"
+→ Token must be from Discord Developer Portal
+→ Format: Prefix(M/N) . 6-7chars . 27chars
+→ Check token wasn't corrupted when copying
+
+Problem: Bot doesn't appear online
+→ Check VPS logs for errors
+→ Verify auth tokens match on both sides
+→ Restart VPS worker: node vps-worker-template.js
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+📚 DOCUMENTATION
+
+Start with these files in order:
+
+1. BOT_HOSTING_SETUP.md    ← Complete overview
+2. VPS_QUICK_START.md      ← Quick reference
+3. VPS_SETUP.md            ← Detailed guide
+4. ARCHITECTURE.md         ← How it works
+5. SETUP_INSTRUCTIONS.txt  ← Additional help
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+🎯 NEXT STEPS
+
+□ Read BOT_HOSTING_SETUP.md (5 minutes)
+□ Generate auth token
+□ Update website .env
+□ Copy files to VPS
+□ Install dependencies on VPS
+□ Start VPS worker
+□ Restart website
+□ Test with a bot token
+□ Success! 🎉
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+Questions? Check the documentation files or re-read the
+appropriate section of BOT_HOSTING_SETUP.md!

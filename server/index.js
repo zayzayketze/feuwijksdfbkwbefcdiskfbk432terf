@@ -4,6 +4,8 @@ const path = require('path');
 const dotenv = require('dotenv');
 const { OAuth2Client } = require('google-auth-library');
 const { v4: uuidv4 } = require('uuid');
+const http = require('http');
+const https = require('https');
 
 dotenv.config();
 
@@ -13,6 +15,13 @@ const FRONTEND_URL = process.env.FRONTEND_URL || `http://localhost:${PORT}`;
 const GOOGLE_CLIENT_ID = process.env.GOOGLE_CLIENT_ID;
 const GOOGLE_CLIENT_SECRET = process.env.GOOGLE_CLIENT_SECRET;
 const SESSION_SECRET = process.env.SESSION_SECRET || 'dev-secret-change-me';
+
+// VPS Configuration
+const VPS_ENABLED = process.env.VPS_ENABLED === 'true';
+const VPS_HOST = process.env.VPS_HOST || 'localhost';
+const VPS_PORT = process.env.VPS_PORT || 5000;
+const VPS_AUTH_TOKEN = process.env.VPS_AUTH_TOKEN || 'change-me';
+const VPS_PROTOCOL = process.env.VPS_PROTOCOL || 'http';
 
 const users = [];
 const botProfiles = new Map();
@@ -27,6 +36,57 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 app.use(express.static(path.join(__dirname, '..')));
+
+// VPS Integration Helper
+async function sendToVPS(action, data) {
+  if (!VPS_ENABLED) {
+    console.log('[VPS] Disabled. Would send:', { action, data });
+    return { success: true, vpsEnabled: false };
+  }
+
+  return new Promise((resolve, reject) => {
+    const payload = JSON.stringify({ action, token: VPS_AUTH_TOKEN, data });
+    const protocol = VPS_PROTOCOL === 'https' ? https : http;
+    const options = {
+      hostname: VPS_HOST,
+      port: VPS_PORT,
+      path: '/api/bots',
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Content-Length': Buffer.byteLength(payload),
+        'Authorization': `Bearer ${VPS_AUTH_TOKEN}`,
+      },
+    };
+
+    const req = protocol.request(options, (res) => {
+      let body = '';
+      res.on('data', (chunk) => { body += chunk; });
+      res.on('end', () => {
+        try {
+          const response = JSON.parse(body);
+          if (res.statusCode === 200 || res.statusCode === 201) {
+            resolve({ success: true, response });
+          } else {
+            reject(new Error(`VPS error: ${response.error || 'Unknown error'}`));
+          }
+        } catch (error) {
+          reject(new Error(`VPS response parse error: ${error.message}`));
+        }
+      });
+    });
+
+    req.on('error', (error) => {
+      console.error('[VPS] Connection error:', error.message);
+      reject(new Error(`VPS connection failed: ${error.message}`));
+    });
+
+    req.write(payload);
+    req.end();
+  });
+}
+
+
 
 function getUserByGoogleId(googleId) {
   return users.find((user) => user.googleId === googleId);
@@ -274,6 +334,20 @@ app.post('/api/bots', (req, res) => {
   const nextBots = [...existingBots, bot];
   saveBotsForUser(userId, nextBots);
 
+  // Send bot to VPS if enabled
+  if (VPS_ENABLED) {
+    sendToVPS('deploy', {
+      botId: bot.id,
+      userId: user.id,
+      token: bot.token,
+      modules: bot.modules,
+    }).catch((error) => {
+      console.error('[VPS Deploy Error]', error.message);
+      // Bot is created in the database even if VPS deployment fails
+      // User can try again or check VPS status
+    });
+  }
+
   return res.json({ bot, bots: nextBots });
 });
 
@@ -294,8 +368,25 @@ app.delete('/api/bots/:userId/:botId', (req, res) => {
   }
 
   const currentBots = getBotsForUser(userId);
+  const botToDelete = currentBots.find((bot) => bot.id === botId && bot.ownerId === userId);
+  
+  if (!botToDelete) {
+    return res.status(404).json({ error: 'Bot not found.' });
+  }
+
   const nextBots = currentBots.filter((bot) => bot.id !== botId || bot.ownerId !== userId);
   saveBotsForUser(userId, nextBots);
+
+  // Notify VPS to stop bot if enabled
+  if (VPS_ENABLED) {
+    sendToVPS('remove', {
+      botId: botToDelete.id,
+      userId: user.id,
+    }).catch((error) => {
+      console.error('[VPS Remove Error]', error.message);
+      // Bot is removed from database regardless of VPS removal
+    });
+  }
 
   return res.json({ bots: nextBots });
 });

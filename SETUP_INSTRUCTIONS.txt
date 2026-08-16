@@ -1,0 +1,193 @@
+# VPS Bot Hosting Integration - Complete Setup
+
+Your bot hosting system now has full VPS integration! This means bots will actually run on your VPS instead of just being stored in a database.
+
+## 📦 New Files Created
+
+1. **`BOT_HOSTING_SETUP.md`** - Complete comprehensive guide (START HERE!)
+2. **`VPS_SETUP.md`** - Detailed step-by-step setup instructions
+3. **`VPS_QUICK_START.md`** - Quick reference guide
+4. **`vps-worker-template.js`** - The VPS bot worker (copy to your VPS)
+5. **`.env.vps.example`** - VPS environment template
+6. **`.env.example`** - Updated with VPS configuration
+
+## 🎯 What Was Added to Your Website
+
+Your website's backend (`server/index.js`) now includes:
+
+- **VPS Configuration Support**: Reads VPS settings from `.env`
+- **`sendToVPS()` Function**: Communicates with VPS worker
+- **Bot Deployment**: Sends bots to VPS when created
+- **Bot Removal**: Tells VPS to stop bots when deleted
+- **Error Handling**: Gracefully handles VPS connection failures
+
+## ⚡ 30-Second Setup
+
+### Website Server
+```bash
+# Edit .env and set:
+VPS_ENABLED=true
+VPS_HOST=your-vps-ip-address
+VPS_PORT=5000
+VPS_AUTH_TOKEN=generate-random-token-here
+VPS_PROTOCOL=http
+
+# Restart:
+npm start
+```
+
+### VPS Server
+```bash
+# Copy vps-worker-template.js to ~/voidhaven-bots/
+# Create .env with:
+VPS_PORT=5000
+VPS_AUTH_TOKEN=same-token-as-website
+
+# Install and run:
+npm install express discord.js dotenv
+node vps-worker-template.js
+```
+
+**Done!** Your bots are now hosted on your VPS.
+
+---
+
+## 📚 Documentation Files
+
+Read these in order:
+
+1. **`BOT_HOSTING_SETUP.md`** - Overview and how everything works
+2. **`VPS_QUICK_START.md`** - Quick reference for configuration
+3. **`VPS_SETUP.md`** - Detailed setup with troubleshooting
+
+---
+
+## 🔑 Key Concepts
+
+### VPS_ENABLED
+- `true` = Bots run on your VPS (production)
+- `false` = Bots only exist in dashboard (testing)
+
+### VPS_HOST
+- Your VPS's IP address or domain
+- Examples: `192.168.1.100`, `bots.example.com`, `vps.myhosting.com`
+
+### VPS_AUTH_TOKEN
+- Shared secret between website and VPS
+- Generate with: `openssl rand -base64 32`
+- **Must be identical on both sides**
+
+### VPS_PROTOCOL
+- `http` for local/testing
+- `https` for production (requires SSL certificate)
+
+---
+
+## ✅ Validation Checklist
+
+- [ ] Read `BOT_HOSTING_SETUP.md`
+- [ ] Generated VPS_AUTH_TOKEN
+- [ ] Found your VPS's IP or domain
+- [ ] Updated website `.env` with VPS settings
+- [ ] Copied `vps-worker-template.js` to VPS
+- [ ] Created `.env` on VPS
+- [ ] Installed Node.js dependencies on VPS
+- [ ] Started VPS worker: `node vps-worker-template.js`
+- [ ] Restarted website: `npm start`
+- [ ] Tested by creating a bot in dashboard
+
+---
+
+## 🚀 Workflow After Setup
+
+1. **User signs in** to your website
+2. **Enters bot token** and selects modules
+3. **Clicks "Host Bot"**
+4. Website **stores bot** and **sends to VPS**
+5. VPS **spawns Discord bot**
+6. **Bot runs 24/7** on your VPS
+7. User can **manage** (enable/disable modules) or **delete**
+8. User can host **up to 3 bots** per account
+
+---
+
+## 🔒 Security Notes
+
+- **HTTPS**: Use `VPS_PROTOCOL=https` with SSL cert in production
+- **Firewall**: Restrict port 5000 to only your website server's IP
+- **Token**: Generate strong random token, never share publicly
+- **Privacy**: Bot tokens are never stored on disk, only in memory
+
+---
+
+## 🧪 Test Locally First
+
+Before deploying to a VPS, test locally:
+
+```env
+# .env
+VPS_ENABLED=true
+VPS_HOST=127.0.0.1
+VPS_PORT=5000
+VPS_AUTH_TOKEN=test-token
+VPS_PROTOCOL=http
+```
+
+Then run both on your machine:
+- Terminal 1: `npm start` (website)
+- Terminal 2: `node vps-worker-template.js` (worker)
+
+---
+
+## 📞 Common Questions
+
+**Q: Do I need to deploy to a VPS immediately?**
+A: No! Set `VPS_ENABLED=false` to test locally first.
+
+**Q: Can I add custom module features?**
+A: Yes! Edit the `messageCreate` event in `vps-worker-template.js`.
+
+**Q: What if my bot disconnects?**
+A: The worker will automatically log the error. Check VPS logs.
+
+**Q: Can users run their own bot hosting?**
+A: Yes, if you distribute the worker template to them.
+
+**Q: Does this support multiple VPS?**
+A: Currently it connects to one VPS. Multiple VPS requires custom routing.
+
+---
+
+## 🎉 You're All Set!
+
+Your bot hosting system is fully integrated with VPS support. Users can now:
+
+- ✅ Sign up and create profiles
+- ✅ Submit Discord bot tokens
+- ✅ Select bot modules
+- ✅ Host up to 3 bots per account
+- ✅ Manage bots through the dashboard
+- ✅ Have bots run on your VPS 24/7
+
+**Next: Read `BOT_HOSTING_SETUP.md` for detailed instructions!**
+
+---
+
+## 📋 File Reference
+
+```
+voidhaven-website/
+├── BOT_HOSTING_SETUP.md          ← Main guide (READ THIS FIRST)
+├── VPS_SETUP.md                  ← Detailed setup steps
+├── VPS_QUICK_START.md            ← Quick reference
+├── vps-worker-template.js        ← Copy to your VPS
+├── .env.example                  ← Website config template
+├── .env.vps.example              ← VPS config template
+├── server/
+│   └── index.js                  ← Updated with VPS integration
+└── ... (other files)
+```
+
+---
+
+**Questions?** Check the documentation files or re-read the appropriate section!

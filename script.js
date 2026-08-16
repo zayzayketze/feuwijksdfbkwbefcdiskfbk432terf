@@ -149,7 +149,13 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     async function apiFetch(path, options = {}) {
-      const response = await fetch(path, {
+      // Configure API endpoint - can be different from frontend URL
+      const API_BASE = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1'
+        ? `http://localhost:3000`
+        : window.location.origin;
+      
+      const url = API_BASE + path;
+      const response = await fetch(url, {
         ...options,
         headers: {
           'Content-Type': 'application/json',
