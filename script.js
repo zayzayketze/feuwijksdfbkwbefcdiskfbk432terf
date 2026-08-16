@@ -9,8 +9,8 @@ const createCursorEffect = () => {
 
   let width = window.innerWidth;
   let height = window.innerHeight;
-  let mouseX = width / 2;
-  let mouseY = height / 2;
+  let mouseX = -9999;
+  let mouseY = -9999;
   let pointerActive = false;
 
   canvas.width = width;
@@ -108,8 +108,12 @@ const createCursorEffect = () => {
 
   const animate = (time) => {
     ctx.clearRect(0, 0, width, height);
-    updateNodes(time);
-    drawConnections();
+
+    if (pointerActive) {
+      updateNodes(time);
+      drawConnections();
+    }
+
     requestAnimationFrame(animate);
   };
 
@@ -124,14 +128,10 @@ const createCursorEffect = () => {
 
   document.addEventListener('mouseleave', () => {
     pointerActive = false;
-    mouseX = width / 2;
-    mouseY = height / 2;
   });
 
   document.addEventListener('pointerleave', () => {
     pointerActive = false;
-    mouseX = width / 2;
-    mouseY = height / 2;
   });
 
   window.addEventListener('resize', () => {
@@ -139,8 +139,11 @@ const createCursorEffect = () => {
     height = window.innerHeight;
     canvas.width = width;
     canvas.height = height;
-    mouseX = width / 2;
-    mouseY = height / 2;
+
+    if (!pointerActive) {
+      mouseX = -9999;
+      mouseY = -9999;
+    }
 
     for (const node of nodes) {
       node.baseX = Math.random() * width;
