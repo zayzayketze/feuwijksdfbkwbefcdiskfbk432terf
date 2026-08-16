@@ -16,7 +16,8 @@ const createCursorEffect = () => {
   canvas.width = width;
   canvas.height = height;
 
-  const nodeCount = Math.min(32, Math.max(18, Math.round((width * height) / 120)));
+  const nodeCount = 18;
+  const connectionRange = 100;
   const nodes = [];
 
   for (let i = 0; i < nodeCount; i++) {
@@ -28,8 +29,8 @@ const createCursorEffect = () => {
       vx: 0,
       vy: 0,
       phase: Math.random() * Math.PI * 2,
-      drift: 0.3 + Math.random() * 0.8,
-      radius: 1.4 + Math.random() * 2.2,
+      drift: 0.4 + Math.random() * 0.8,
+      radius: 1.6 + Math.random() * 2.3,
     });
   }
 
@@ -42,11 +43,14 @@ const createCursorEffect = () => {
 
   const updateNodes = (time) => {
     for (const node of nodes) {
+      const driftX = Math.sin(time * 0.0005 * node.drift + node.phase) * 0.9;
+      const driftY = Math.cos(time * 0.0006 * node.drift + node.phase) * 0.9;
+
       if (!pointerActive) {
-        node.vx += (node.baseX - node.x) * 0.02;
-        node.vy += (node.baseY - node.y) * 0.02;
-        node.vx *= 0.88;
-        node.vy *= 0.88;
+        node.vx += (node.baseX + driftX * 30 - node.x) * 0.02;
+        node.vy += (node.baseY + driftY * 30 - node.y) * 0.02;
+        node.vx *= 0.87;
+        node.vy *= 0.87;
         node.x += node.vx;
         node.y += node.vy;
         continue;
@@ -58,45 +62,47 @@ const createCursorEffect = () => {
       const repulseDist = 150;
 
       if (distance < repulseDist) {
-        const force = (1 - distance / repulseDist) * 1.7;
+        const force = (1 - distance / repulseDist) * 1.8;
         const angle = Math.atan2(dy, dx);
         node.vx -= Math.cos(angle) * force * 8;
         node.vy -= Math.sin(angle) * force * 8;
       }
 
-      node.vx += (node.baseX - node.x) * 0.015;
-      node.vy += (node.baseY - node.y) * 0.015;
-
-      node.x += Math.sin(time * 0.0007 * node.drift + node.phase) * 0.18 + node.vx;
-      node.y += Math.cos(time * 0.0008 * node.drift + node.phase) * 0.18 + node.vy;
-      node.vx *= 0.86;
-      node.vy *= 0.86;
+      node.vx += (node.baseX + driftX * 30 - node.x) * 0.015;
+      node.vy += (node.baseY + driftY * 30 - node.y) * 0.015;
+      node.x += node.vx + driftX;
+      node.y += node.vy + driftY;
+      node.vx *= 0.84;
+      node.vy *= 0.84;
     }
   };
 
   const drawConnections = () => {
     for (let i = 0; i < nodes.length; i++) {
       const a = nodes[i];
+      let connected = false;
+
       for (let j = i + 1; j < nodes.length; j++) {
         const b = nodes[j];
         const dx = a.x - b.x;
         const dy = a.y - b.y;
         const distance = Math.hypot(dx, dy);
 
-        if (distance < 120) {
-          const alpha = (1 - distance / 120) * 0.7;
+        if (distance < connectionRange) {
+          const alpha = (1 - distance / connectionRange) * 0.8;
           ctx.beginPath();
           ctx.strokeStyle = `rgba(196, 181, 253, ${alpha})`;
           ctx.lineWidth = 1;
           ctx.moveTo(a.x, a.y);
           ctx.lineTo(b.x, b.y);
           ctx.stroke();
+          connected = true;
         }
       }
-    }
 
-    for (const node of nodes) {
-      drawNode(node);
+      if (connected) {
+        drawNode(a);
+      }
     }
   };
 
