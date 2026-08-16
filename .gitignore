@@ -9,7 +9,9 @@
 *.swp
 *.swo
 *~
-.env.local
+.env
+.env.*
+!.env.example
 
 # Build/Dependencies
 node_modules/
