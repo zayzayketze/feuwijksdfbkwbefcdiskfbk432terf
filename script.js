@@ -11,110 +11,119 @@ const createCursorEffect = () => {
   let height = window.innerHeight;
   let mouseX = width / 2;
   let mouseY = height / 2;
+  let pointerActive = false;
 
   canvas.width = width;
   canvas.height = height;
 
-  const horizontal = [];
-  const vertical = [];
-  const spacing = 42;
+  const nodeCount = Math.min(32, Math.max(18, Math.round((width * height) / 120)));
+  const nodes = [];
 
-  for (let y = -spacing; y < height + spacing; y += spacing) {
-    horizontal.push({
-      baseY: y,
-      y: y,
+  for (let i = 0; i < nodeCount; i++) {
+    nodes.push({
+      baseX: Math.random() * width,
+      baseY: Math.random() * height,
+      x: Math.random() * width,
+      y: Math.random() * height,
+      vx: 0,
+      vy: 0,
       phase: Math.random() * Math.PI * 2,
-      speed: 0.35 + Math.random() * 0.45,
-      amp: 8 + Math.random() * 12,
+      drift: 0.3 + Math.random() * 0.8,
+      radius: 1.4 + Math.random() * 2.2,
     });
   }
 
-  for (let x = -spacing; x < width + spacing; x += spacing) {
-    vertical.push({
-      baseX: x,
-      x: x,
-      phase: Math.random() * Math.PI * 2,
-      speed: 0.35 + Math.random() * 0.45,
-      amp: 8 + Math.random() * 12,
-    });
-  }
+  const drawNode = (node) => {
+    ctx.beginPath();
+    ctx.fillStyle = 'rgba(216, 180, 254, 0.9)';
+    ctx.arc(node.x, node.y, node.radius, 0, Math.PI * 2);
+    ctx.fill();
+  };
 
-  const drawLines = (time) => {
-    ctx.clearRect(0, 0, width, height);
-    ctx.lineWidth = 1;
-    ctx.strokeStyle = 'rgba(196, 181, 253, 0.18)';
-
-    for (const line of horizontal) {
-      const drift = Math.sin(time * 0.0007 * line.speed + line.phase) * line.amp;
-      const dy = Math.abs(mouseY - (line.baseY + drift));
-      let y = line.baseY + drift;
-
-      if (dy < 150) {
-        const push = (1 - dy / 150) * 26;
-        y += mouseY < y ? -push : push;
+  const updateNodes = (time) => {
+    for (const node of nodes) {
+      if (!pointerActive) {
+        node.vx += (node.baseX - node.x) * 0.02;
+        node.vy += (node.baseY - node.y) * 0.02;
+        node.vx *= 0.88;
+        node.vy *= 0.88;
+        node.x += node.vx;
+        node.y += node.vy;
+        continue;
       }
 
-      line.y += (y - line.y) * 0.1;
+      const dx = mouseX - node.x;
+      const dy = mouseY - node.y;
+      const distance = Math.hypot(dx, dy) || 1;
+      const repulseDist = 150;
 
-      ctx.beginPath();
-      for (let x = 0; x <= width; x += 10) {
-        const wave = Math.sin((x * 0.04) + time * 0.001 + line.phase) * 4;
-        const px = x;
-        const py = line.y + wave;
+      if (distance < repulseDist) {
+        const force = (1 - distance / repulseDist) * 1.7;
+        const angle = Math.atan2(dy, dx);
+        node.vx -= Math.cos(angle) * force * 8;
+        node.vy -= Math.sin(angle) * force * 8;
+      }
 
-        if (x === 0) {
-          ctx.moveTo(px, py);
-        } else {
-          ctx.lineTo(px, py);
+      node.vx += (node.baseX - node.x) * 0.015;
+      node.vy += (node.baseY - node.y) * 0.015;
+
+      node.x += Math.sin(time * 0.0007 * node.drift + node.phase) * 0.18 + node.vx;
+      node.y += Math.cos(time * 0.0008 * node.drift + node.phase) * 0.18 + node.vy;
+      node.vx *= 0.86;
+      node.vy *= 0.86;
+    }
+  };
+
+  const drawConnections = () => {
+    for (let i = 0; i < nodes.length; i++) {
+      const a = nodes[i];
+      for (let j = i + 1; j < nodes.length; j++) {
+        const b = nodes[j];
+        const dx = a.x - b.x;
+        const dy = a.y - b.y;
+        const distance = Math.hypot(dx, dy);
+
+        if (distance < 120) {
+          const alpha = (1 - distance / 120) * 0.7;
+          ctx.beginPath();
+          ctx.strokeStyle = `rgba(196, 181, 253, ${alpha})`;
+          ctx.lineWidth = 1;
+          ctx.moveTo(a.x, a.y);
+          ctx.lineTo(b.x, b.y);
+          ctx.stroke();
         }
       }
-      ctx.stroke();
     }
 
-    ctx.strokeStyle = 'rgba(167, 139, 250, 0.14)';
-
-    for (const line of vertical) {
-      const drift = Math.sin(time * 0.0007 * line.speed + line.phase) * line.amp;
-      const dx = Math.abs(mouseX - (line.baseX + drift));
-      let x = line.baseX + drift;
-
-      if (dx < 150) {
-        const push = (1 - dx / 150) * 26;
-        x += mouseX < x ? -push : push;
-      }
-
-      line.x += (x - line.x) * 0.1;
-
-      ctx.beginPath();
-      for (let y = 0; y <= height; y += 10) {
-        const wave = Math.sin((y * 0.04) + time * 0.001 + line.phase) * 4;
-        const px = line.x + wave;
-        const py = y;
-
-        if (y === 0) {
-          ctx.moveTo(px, py);
-        } else {
-          ctx.lineTo(px, py);
-        }
-      }
-      ctx.stroke();
+    for (const node of nodes) {
+      drawNode(node);
     }
   };
 
   const animate = (time) => {
-    mouseX += (window.innerWidth * 0.5 - mouseX) * 0.01;
-    mouseY += (window.innerHeight * 0.5 - mouseY) * 0.01;
-
-    drawLines(time);
+    ctx.clearRect(0, 0, width, height);
+    updateNodes(time);
+    drawConnections();
     requestAnimationFrame(animate);
   };
 
-  document.addEventListener('mousemove', (e) => {
+  const handlePointerMove = (e) => {
     mouseX = e.clientX;
     mouseY = e.clientY;
-  });
+    pointerActive = true;
+  };
+
+  document.addEventListener('mousemove', handlePointerMove);
+  document.addEventListener('pointermove', handlePointerMove);
 
   document.addEventListener('mouseleave', () => {
+    pointerActive = false;
+    mouseX = width / 2;
+    mouseY = height / 2;
+  });
+
+  document.addEventListener('pointerleave', () => {
+    pointerActive = false;
     mouseX = width / 2;
     mouseY = height / 2;
   });
@@ -126,6 +135,15 @@ const createCursorEffect = () => {
     canvas.height = height;
     mouseX = width / 2;
     mouseY = height / 2;
+
+    for (const node of nodes) {
+      node.baseX = Math.random() * width;
+      node.baseY = Math.random() * height;
+      node.x = node.baseX;
+      node.y = node.baseY;
+      node.vx = 0;
+      node.vy = 0;
+    }
   });
 
   requestAnimationFrame(animate);
