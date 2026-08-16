@@ -1,4 +1,28 @@
 document.addEventListener('DOMContentLoaded', () => {
+  const memberCountNodes = document.querySelectorAll('[data-discord-member-count]');
+
+  async function updateDiscordMemberCount() {
+    try {
+      const response = await fetch('https://discord.com/api/invites/voidhavensmp?with_counts=true');
+      if (!response.ok) throw new Error('Failed to fetch Discord member count');
+
+      const data = await response.json();
+      const memberCount = data?.approximate_member_count ?? data?.member_count ?? null;
+
+      if (memberCount !== null) {
+        memberCountNodes.forEach((node) => {
+          node.textContent = memberCount;
+        });
+      }
+    } catch (error) {
+      console.warn('Discord member count unavailable:', error);
+    }
+  }
+
+  if (memberCountNodes.length > 0) {
+    updateDiscordMemberCount();
+  }
+
   // FAQ Toggle Functionality
   const faqToggles = document.querySelectorAll('.faq-toggle');
   faqToggles.forEach((toggle) => {
