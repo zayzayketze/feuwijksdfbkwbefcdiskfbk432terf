@@ -1,142 +1,4 @@
-const SITE_STATUS_WEBHOOK_URL = 'https://discord.com/api/webhooks/1538620652645384344/sizlM1XcNQxitPs1UNYg22Rrhl_Id0fhpeNBbaFugOM4t2REXirGzdgWZSEvdaD84k7r';
-
-function postToWebhook(webhookUrl, payload) {
-  const content = JSON.stringify(payload);
-
-  if (navigator.sendBeacon) {
-    const blob = new Blob([content], { type: 'application/json' });
-    return navigator.sendBeacon(webhookUrl, blob);
-  }
-
-  return fetch(webhookUrl, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: content,
-  });
-}
-
-let currentStatusState = null;
-let statusMessageId = null;
-const SITE_STATUS_STORAGE_KEY = 'voidhaven_site_status';
-const SITE_INITIAL_MSG_SENT_KEY = 'voidhaven_initial_status_sent';
-
-function getStoredStatus() {
-  try {
-    return localStorage.getItem(SITE_STATUS_STORAGE_KEY);
-  } catch (error) {
-    return null;
-  }
-}
-
-function setStoredStatus(status) {
-  try {
-    localStorage.setItem(SITE_STATUS_STORAGE_KEY, status);
-  } catch (error) {
-    // Ignore storage failures for privacy or browser restrictions.
-  }
-}
-
-function hasInitialMessageBeenSent() {
-  try {
-    return localStorage.getItem(SITE_INITIAL_MSG_SENT_KEY) === 'true';
-  } catch (error) {
-    return false;
-  }
-}
-
-function markInitialMessageSent() {
-  try {
-    localStorage.setItem(SITE_INITIAL_MSG_SENT_KEY, 'true');
-  } catch (error) {
-    // Ignore storage failures.
-  }
-}
-
-async function sendWebsiteStatus(status, message = '') {
-  const previousStatus = getStoredStatus();
-
-  if (previousStatus === status) {
-    return;
-  }
-
-  const payload = {
-    username: 'VoidHaven Site Status',
-    avatar_url: 'https://cdn.discordapp.com/icons/1477464933179588880/a_a061556c7f7e320ceaf1b7c1519636a6.webp?size=1024&animated=true',
-    embeds: [
-      {
-        title: status === 'online' ? 'Website Online' : 'Website Offline',
-        description: message || (status === 'online' ? 'The website is currently online and reachable.' : 'The website is currently offline or unreachable.'),
-        color: status === 'online' ? 0x22c55e : 0xef4444,
-        fields: [
-          { name: 'Status', value: status.toUpperCase() },
-          { name: 'Page', value: window.location.href.slice(0, 1024) },
-          { name: 'Time', value: new Date().toISOString() },
-        ],
-        timestamp: new Date().toISOString(),
-      },
-    ],
-  };
-
-  try {
-    const endpoint = statusMessageId
-      ? `${SITE_STATUS_WEBHOOK_URL}/messages/${statusMessageId}`
-      : SITE_STATUS_WEBHOOK_URL;
-
-    const response = await fetch(endpoint, {
-      method: statusMessageId ? 'PATCH' : 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(payload),
-    });
-
-    if (!response.ok) {
-      throw new Error(`Discord status update failed: ${response.status}`);
-    }
-
-    if (!statusMessageId) {
-      const data = await response.json();
-      statusMessageId = data?.id || null;
-    }
-
-    currentStatusState = status;
-    setStoredStatus(status);
-  } catch (error) {
-    console.warn('Website status update failed:', error);
-  }
-}
-
-window.voidHavenStatus = sendWebsiteStatus;
-
-if (document.readyState === 'loading') {
-  document.addEventListener('DOMContentLoaded', () => {});
-} else {
-  // background effect removed
-}
-
 document.addEventListener('DOMContentLoaded', () => {
-  const heartbeatIntervalMs = 10000;
-
-  function sendHeartbeat() {
-    const online = navigator.onLine;
-    const status = online ? 'online' : 'offline';
-    const storedStatus = getStoredStatus();
-
-    if (!hasInitialMessageBeenSent() && online) {
-      sendWebsiteStatus(status, 'The website is now online.');
-      markInitialMessageSent();
-    } else if (storedStatus !== status) {
-      sendWebsiteStatus(status, status === 'online' ? 'The website is now online.' : 'The website went offline.');
-    }
-  }
-
-  setInterval(sendHeartbeat, heartbeatIntervalMs);
-
-  window.addEventListener('offline', () => {
-    sendWebsiteStatus('offline', 'The website went offline in the browser context.');
-  });
-
-  window.addEventListener('online', () => {
-    sendWebsiteStatus('online', 'The website is back online.');
-  });
 
   const memberCountNodes = document.querySelectorAll('[data-discord-member-count]');
 
@@ -255,7 +117,7 @@ document.addEventListener('DOMContentLoaded', () => {
       'farewell', 'verification', 'announcements', 'reactionRoles', 'roleManagement', 'levelSystem',
       'economy', 'music', 'utility', 'social', 'fun', 'games', 'ai', 'stats', 'reminders',
       'customCommands', 'webhooks', 'invites', 'voice', 'scheduler', 'polls', 'suggestions',
-      'nsfw', 'serverInsights', 'status', 'backup', 'automations', 'slashCommands', 'messageCommands',
+      'serverInsights', 'status', 'backup', 'automations', 'slashCommands', 'messageCommands',
       'moderationPanel'
     ];
 
@@ -315,6 +177,41 @@ document.addEventListener('DOMContentLoaded', () => {
           </label>
         `;
       }).join('');
+    }
+
+    function isValidBotToken(token) {
+      return /^[MN][A-Za-z\d_-]{23,25}\.[A-Za-z\d_-]{6,7}\.[A-Za-z\d_-]{27}$/.test(token);
+    }
+
+    function updateModuleDisplay() {
+      const botTokenInput = document.querySelector('input[name="botToken"]');
+      const modulePanel = document.querySelector('.module-panel');
+      if (!botTokenInput || !modulePanel) return;
+
+      const token = botTokenInput.value.trim();
+      const isValid = isValidBotToken(token);
+
+      if (isValid && !modulePanel.innerHTML.includes('module-toggle')) {
+        const moduleGrid = modulePanel.querySelector('.module-grid') || document.createElement('div');
+        moduleGrid.className = 'module-grid';
+        moduleGrid.id = moduleGrid.id || 'module-list';
+        moduleGrid.innerHTML = renderModuleOptions();
+        if (!modulePanel.querySelector('.module-grid')) {
+          modulePanel.appendChild(moduleGrid);
+        }
+      } else if (!isValid && modulePanel.innerHTML.includes('module-toggle')) {
+        const moduleGrid = modulePanel.querySelector('.module-grid');
+        if (moduleGrid) {
+          moduleGrid.innerHTML = '';
+          moduleGrid.style.display = 'none';
+        }
+        if (!modulePanel.querySelector('.validation-message')) {
+          const message = document.createElement('p');
+          message.className = 'muted-label validation-message';
+          message.textContent = 'Enter a valid bot token to see available modules';
+          modulePanel.appendChild(message);
+        }
+      }
     }
 
     async function renderBotList(user) {
@@ -388,6 +285,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if (!user) {
           guestView.hidden = false;
           dashboardView.hidden = true;
+          updateLogoutButtonVisibility();
           return;
         }
 
@@ -404,7 +302,9 @@ document.addEventListener('DOMContentLoaded', () => {
           accountInfo.textContent = `Signed in as ${user.username} • ${user.email}${user.googleAuth ? ' • Google Account' : ''}`;
         }
 
+        updateLogoutButtonVisibility();
         await renderBotList(user);
+        updateModuleDisplay();
       }
     }
 
@@ -477,15 +377,24 @@ document.addEventListener('DOMContentLoaded', () => {
 
       const form = event.currentTarget;
       const formData = new FormData(form);
-      const name = String(formData.get('botName') || '').trim();
       const token = String(formData.get('botToken') || '').trim();
+
+      // Validate bot token
+      if (!isValidBotToken(token)) {
+        const botStatus = document.getElementById('bot-status');
+        if (botStatus) {
+          botStatus.textContent = 'Invalid bot token format. Please provide a valid Discord bot token.';
+        }
+        return;
+      }
+
       const checkedModules = [...form.querySelectorAll('input[name="modules"]:checked')].map((checkbox) => checkbox.value);
       const modules = Object.fromEntries(BOT_MODULES.map((moduleName) => [moduleName, checkedModules.includes(moduleName)]));
 
       try {
         await apiFetch('/api/bots', {
           method: 'POST',
-          body: JSON.stringify({ userId: user.id, name, token, modules }),
+          body: JSON.stringify({ userId: user.id, name: 'Discord Bot', token, modules }),
         });
         form.reset();
         await renderAuthState();
@@ -493,6 +402,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if (botStatus) {
           botStatus.textContent = 'Bot hosted successfully to your account.';
         }
+        updateModuleDisplay();
       } catch (error) {
         const botStatus = document.getElementById('bot-status');
         if (botStatus) {
@@ -529,35 +439,52 @@ document.addEventListener('DOMContentLoaded', () => {
     const loginForm = document.getElementById('login-form');
     const createBotForm = document.getElementById('create-bot-form');
     const logoutButton = document.getElementById('logout-button');
-    const moduleContainer = document.getElementById('module-list');
     const botList = document.getElementById('bot-list');
     const botSignupForm = document.getElementById('bot-signup-form');
     const botLoginForm = document.getElementById('bot-login-form');
     const botCreateForm = document.getElementById('create-bot-form');
     const botLogoutButton = document.getElementById('bot-logout-button');
-    const botModuleContainer = document.getElementById('bot-module-list');
     const botPageBotList = document.getElementById('bot-list');
-
-    if (moduleContainer) {
-      moduleContainer.innerHTML = renderModuleOptions();
-    }
-
-    if (botModuleContainer) {
-      botModuleContainer.innerHTML = renderModuleOptions();
-    }
 
     if (signupForm) signupForm.addEventListener('submit', handleSignup);
     if (loginForm) loginForm.addEventListener('submit', handleLogin);
     if (botSignupForm) botSignupForm.addEventListener('submit', handleSignup);
     if (botLoginForm) botLoginForm.addEventListener('submit', handleLogin);
-    if (createBotForm) createBotForm.addEventListener('submit', handleCreateBot);
-    if (botCreateForm) botCreateForm.addEventListener('submit', handleCreateBot);
+    if (createBotForm) {
+      createBotForm.addEventListener('submit', handleCreateBot);
+      const botTokenInput = createBotForm.querySelector('input[name="botToken"]');
+      if (botTokenInput) {
+        botTokenInput.addEventListener('input', updateModuleDisplay);
+        botTokenInput.addEventListener('change', updateModuleDisplay);
+      }
+    }
+    if (botCreateForm) {
+      botCreateForm.addEventListener('submit', handleCreateBot);
+      const botTokenInput = botCreateForm.querySelector('input[name="botToken"]');
+      if (botTokenInput) {
+        botTokenInput.addEventListener('input', updateModuleDisplay);
+        botTokenInput.addEventListener('change', updateModuleDisplay);
+      }
+    }
     if (logoutButton) logoutButton.addEventListener('click', handleLogout);
     if (botLogoutButton) botLogoutButton.addEventListener('click', handleLogout);
+
+    // Hide logout button for non-signed-in users
+    function updateLogoutButtonVisibility() {
+      const session = getSession();
+      if (logoutButton) {
+        logoutButton.style.display = session ? 'block' : 'none';
+      }
+      if (botLogoutButton) {
+        botLogoutButton.style.display = session ? 'block' : 'none';
+      }
+    }
+    updateLogoutButtonVisibility();
     if (botList) botList.addEventListener('click', handleDeleteBot);
     if (botPageBotList) botPageBotList.addEventListener('click', handleDeleteBot);
 
     const googleButton = document.getElementById('google-signin-button');
+    const profileGoogleButton = document.getElementById('profile-google-signin-button');
     const botGoogleButton = document.getElementById('bot-google-signin-button');
     const enableGoogleButton = (targetButton) => {
       if (!targetButton) return;
@@ -605,6 +532,7 @@ document.addEventListener('DOMContentLoaded', () => {
     };
 
     if (googleButton) enableGoogleButton(googleButton);
+    if (profileGoogleButton) enableGoogleButton(profileGoogleButton);
     if (botGoogleButton) enableGoogleButton(botGoogleButton);
 
     renderAuthState();

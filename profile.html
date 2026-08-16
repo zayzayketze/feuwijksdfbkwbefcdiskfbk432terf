@@ -109,16 +109,16 @@
                 <h2 id="welcome-message">Welcome back</h2>
                 <p id="account-info" class="muted-label">Signed in</p>
                 <button id="logout-button" type="button" class="button button-secondary">Log Out</button>
+                
+                <div class="google-auth-row">
+                  <div id="profile-google-signin-button"></div>
+                </div>
               </div>
 
               <div class="bot-panel">
                 <h2>Host a Discord Bot</h2>
                 <form id="create-bot-form" class="bot-form">
                   <div class="form-grid">
-                    <label>
-                      Bot Name
-                      <input type="text" name="botName" placeholder="My Utility Bot" required />
-                    </label>
                     <label>
                       Bot Token
                       <input type="password" name="botToken" placeholder="Paste the Discord bot token here" required />
@@ -132,7 +132,7 @@
 
                   <div class="module-panel">
                     <h2>Bot Modules</h2>
-                    <div id="module-list" class="module-grid"></div>
+                    <p class="muted-label">Enter a valid bot token to see available modules</p>
                   </div>
 
                   <button type="submit" class="button button-primary">Host Bot</button>
