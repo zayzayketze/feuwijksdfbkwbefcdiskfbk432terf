@@ -247,7 +247,9 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 
   const profileApp = document.getElementById('profile-app');
-  if (profileApp) {
+  const botPageApp = document.getElementById('bot-page-app');
+
+  if (profileApp || botPageApp) {
     const BOT_MODULES = [
       'moderation', 'antiSpam', 'antiRaid', 'admin', 'logging', 'automod', 'ticketing', 'welcome',
       'farewell', 'verification', 'announcements', 'reactionRoles', 'roleManagement', 'levelSystem',
@@ -529,25 +531,43 @@ document.addEventListener('DOMContentLoaded', () => {
     const logoutButton = document.getElementById('logout-button');
     const moduleContainer = document.getElementById('module-list');
     const botList = document.getElementById('bot-list');
+    const botSignupForm = document.getElementById('bot-signup-form');
+    const botLoginForm = document.getElementById('bot-login-form');
+    const botCreateForm = document.getElementById('create-bot-form');
+    const botLogoutButton = document.getElementById('bot-logout-button');
+    const botModuleContainer = document.getElementById('bot-module-list');
+    const botPageBotList = document.getElementById('bot-list');
 
     if (moduleContainer) {
       moduleContainer.innerHTML = renderModuleOptions();
     }
 
+    if (botModuleContainer) {
+      botModuleContainer.innerHTML = renderModuleOptions();
+    }
+
     if (signupForm) signupForm.addEventListener('submit', handleSignup);
     if (loginForm) loginForm.addEventListener('submit', handleLogin);
+    if (botSignupForm) botSignupForm.addEventListener('submit', handleSignup);
+    if (botLoginForm) botLoginForm.addEventListener('submit', handleLogin);
     if (createBotForm) createBotForm.addEventListener('submit', handleCreateBot);
+    if (botCreateForm) botCreateForm.addEventListener('submit', handleCreateBot);
     if (logoutButton) logoutButton.addEventListener('click', handleLogout);
+    if (botLogoutButton) botLogoutButton.addEventListener('click', handleLogout);
     if (botList) botList.addEventListener('click', handleDeleteBot);
+    if (botPageBotList) botPageBotList.addEventListener('click', handleDeleteBot);
 
     const googleButton = document.getElementById('google-signin-button');
-    if (googleButton) {
+    const botGoogleButton = document.getElementById('bot-google-signin-button');
+    const enableGoogleButton = (targetButton) => {
+      if (!targetButton) return;
+
       fetch('/api/config')
         .then((response) => response.json())
         .then((config) => {
           const clientId = config.googleClientId || '';
           if (!clientId) {
-            googleButton.innerHTML = '<div class="status-text">Google sign-in is not configured yet. Add your client ID to .env.</div>';
+            targetButton.innerHTML = '<div class="status-text">Google sign-in is not configured yet. Add your client ID to .env.</div>';
             return;
           }
 
@@ -563,7 +583,7 @@ document.addEventListener('DOMContentLoaded', () => {
                   setSession(result.user, result.token);
                   await renderAuthState();
                 } catch (error) {
-                  const message = document.getElementById('login-status');
+                  const message = document.getElementById('login-status') || document.getElementById('bot-login-status');
                   if (message) {
                     message.textContent = error.message;
                   }
@@ -571,7 +591,7 @@ document.addEventListener('DOMContentLoaded', () => {
               },
             });
 
-            window.google.accounts.id.renderButton(googleButton, {
+            window.google.accounts.id.renderButton(targetButton, {
               theme: 'outline',
               size: 'large',
               text: 'continue_with',
@@ -580,9 +600,12 @@ document.addEventListener('DOMContentLoaded', () => {
           }
         })
         .catch(() => {
-          googleButton.innerHTML = '<div class="status-text">Google sign-in could not be loaded from the server config.</div>';
+          targetButton.innerHTML = '<div class="status-text">Google sign-in could not be loaded from the server config.</div>';
         });
-    }
+    };
+
+    if (googleButton) enableGoogleButton(googleButton);
+    if (botGoogleButton) enableGoogleButton(botGoogleButton);
 
     renderAuthState();
   }

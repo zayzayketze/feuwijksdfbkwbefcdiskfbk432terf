@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content="VoidHaven bot hosting dashboard for signed-in users." />
+    <title>Bot Hosting - VoidHaven SMP</title>
+    <link rel="icon" type="image/webp" href="https://cdn.discordapp.com/icons/1477464933179588880/a_a061556c7f7e320ceaf1b7c1519636a6.webp?size=1024&animated=true" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <div class="page-shell">
+      <header class="topbar">
+        <nav class="nav container">
+          <a href="index.html" class="brand" aria-label="VoidHaven SMP home">
+            <img class="brand-logo" src="https://cdn.discordapp.com/icons/1477464933179588880/a_a061556c7f7e320ceaf1b7c1519636a6.webp?size=1024&animated=true" alt="VoidHaven SMP logo" width="32" height="32" />
+            <span>VOIDHAVEN</span>
+          </a>
+          <div class="nav-links">
+            <a href="index.html">Home</a>
+            <a href="about.html">About</a>
+            <a href="features.html">Features</a>
+            <a href="community.html">Community</a>
+            <a href="staff.html">Staff</a>
+            <a href="faq.html">FAQ</a>
+            <a href="rules.html">Rules</a>
+            <a href="partnership.html">Partnerships</a>
+            <a href="join.html">Join</a>
+            <a href="profile.html">Profile</a>
+            <a href="bots.html" class="active">Bots</a>
+          </div>
+          <div class="nav-actions">
+            <a class="social-link" href="https://discord.gg/voidhavensmp" target="_blank" aria-label="Discord">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M20.317 4.37a19.8 19.8 0 00-4.885-1.515a.074.074 0 00-.079.037c-.211.375-.445.864-.607 1.25a18.27 18.27 0 00-5.487 0c-.163-.386-.395-.875-.608-1.25a.077.077 0 00-.079-.037A19.763 19.763 0 003.677 4.37a.07.07 0 00-.032.027C.533 9.046-.32 13.58.099 18.057a.082.082 0 00.031.057 19.9 19.9 0 005.993 3.03.08.08 0 00.087-.027c.461-.63.873-1.295 1.226-1.994a.076.076 0 00-.042-.106 13.107 13.107 0 01-1.872-.892.077.077 0 01-.008-.128 10.2 10.2 0 00.372-.294.075.075 0 01.078-.01c3.928 1.793 8.18 1.793 12.062 0a.075.075 0 01.079.009c.12.098.246.198.373.295a.077.077 0 01-.006.127 12.299 12.299 0 01-1.873.892.076.076 0 00-.041.107c.36.699.772 1.365 1.225 1.994a.076.076 0 00.087.028 19.86 19.86 0 006.002-3.03.077.077 0 00.032-.057c.5-4.761-.838-8.895-3.549-12.577a.06.06 0 00-.031-.028zM8.02 15.33c-1.183 0-2.157-.965-2.157-2.156 0-1.193.964-2.157 2.157-2.157 1.193 0 2.156.964 2.156 2.157 0 1.19-.963 2.156-2.156 2.156zm7.975 0c-1.183 0-2.157-.965-2.157-2.156 0-1.193.964-2.157 2.157-2.157 1.193 0 2.157.964 2.157 2.157 0 1.19-.964 2.156-2.157 2.156z"/></svg>
+            </a>
+            <a class="button button-primary" href="profile.html">Your Profile</a>
+          </div>
+        </nav>
+      </header>
+
+      <main>
+        <section class="hero-minimal section container">
+          <div class="hero-copy">
+            <p class="eyebrow">Bot Hosting</p>
+            <h1>Manage your Discord bots</h1>
+            <p class="lead">
+              Sign in to your profile and use this page to host, manage, and organize your Discord bots.
+              Each account is limited to 3 bots, and each bot stays locked to the owning account.
+            </p>
+          </div>
+        </section>
+
+        <section id="bot-page-app" class="section container profile-section">
+          <div id="bot-auth-gate" class="profile-layout">
+            <div class="auth-panel">
+              <h2>Sign in to host bots</h2>
+              <form id="bot-login-form" class="auth-form">
+                <label>
+                  Username or Email
+                  <input type="text" name="loginUsername" placeholder="username or email" required />
+                </label>
+                <label>
+                  Password
+                  <input type="password" name="loginPassword" placeholder="Password" required />
+                </label>
+                <button type="submit" class="button button-primary">Log In</button>
+                <div id="bot-login-status" class="status-text" aria-live="polite"></div>
+              </form>
+
+              <div class="google-auth-row">
+                <div id="bot-google-signin-button"></div>
+              </div>
+            </div>
+
+            <div class="auth-panel">
+              <h2>Need an account?</h2>
+              <form id="bot-signup-form" class="auth-form">
+                <label>
+                  Username
+                  <input type="text" name="signupUsername" placeholder="yourname" required />
+                </label>
+                <label>
+                  Email
+                  <input type="email" name="signupEmail" placeholder="you@example.com" required />
+                </label>
+                <label>
+                  Password
+                  <input type="password" name="signupPassword" placeholder="Create password" required />
+                </label>
+                <button type="submit" class="button button-secondary">Create Profile</button>
+                <div id="bot-signup-status" class="status-text" aria-live="polite"></div>
+              </form>
+            </div>
+          </div>
+
+          <div id="bot-dashboard" class="profile-section" hidden>
+            <div class="dashboard-card">
+              <h2 id="bot-welcome-message">Welcome back</h2>
+              <p id="bot-account-info" class="muted-label">Signed in</p>
+              <button id="bot-logout-button" type="button" class="button button-secondary">Log Out</button>
+            </div>
+
+            <div class="bot-panel">
+              <h2>Host a Discord Bot</h2>
+              <form id="create-bot-form" class="bot-form">
+                <div class="form-grid">
+                  <label>
+                    Bot Name
+                    <input type="text" name="botName" placeholder="My Utility Bot" required />
+                  </label>
+                  <label>
+                    Bot Token
+                    <input type="password" name="botToken" placeholder="Paste the Discord bot token here" required />
+                  </label>
+                </div>
+
+                <div class="bot-summary">
+                  <strong id="bot-count">0/3 bots used</strong>
+                  <span>Each profile is capped at 3 bots</span>
+                </div>
+
+                <div class="module-panel">
+                  <h2>Bot Modules</h2>
+                  <div id="bot-module-list" class="module-grid"></div>
+                </div>
+
+                <button type="submit" class="button button-primary">Host Bot</button>
+                <div id="bot-status" class="status-text" aria-live="polite"></div>
+              </form>
+            </div>
+
+            <div class="dashboard-card">
+              <h2>My Hosted Bots</h2>
+              <div id="bot-list" class="bot-list"></div>
+            </div>
+          </div>
+        </section>
+      </main>
+
+      <footer class="footer">
+        <div class="container footer-inner">
+          <p>© 2026 VoidHaven SMP</p>
+          <div class="footer-links">
+            <a href="index.html">Home</a>
+            <a href="about.html">About</a>
+            <a href="features.html">Features</a>
+            <a href="community.html">Community</a>
+            <a href="staff.html">Staff</a>
+            <a href="faq.html">FAQ</a>
+            <a href="rules.html">Rules</a>
+            <a href="partnership.html">Partnerships</a>
+            <a href="join.html">Join</a>
+            <a href="profile.html">Profile</a>
+            <a href="bots.html">Bots</a>
+          </div>
+        </div>
+      </footer>
+    </div>
+
+    <script src="https://accounts.google.com/gsi/client" async defer></script>
+    <script src="bot-hosting.js"></script>
+    <script src="script.js"></script>
+  </body>
+</html>
