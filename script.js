@@ -6,100 +6,117 @@ const createCursorEffect = () => {
   document.body.insertBefore(canvas, document.body.firstChild);
 
   const ctx = canvas.getContext('2d');
-  const gridSize = 34;
 
   let width = window.innerWidth;
   let height = window.innerHeight;
   let mouseX = width / 2;
   let mouseY = height / 2;
-  let targetX = mouseX;
-  let targetY = mouseY;
 
   canvas.width = width;
   canvas.height = height;
 
-  const points = [];
-  const cols = Math.ceil(width / gridSize) + 2;
-  const rows = Math.ceil(height / gridSize) + 2;
+  const horizontal = [];
+  const vertical = [];
+  const spacing = 42;
 
-  for (let row = 0; row < rows; row++) {
-    for (let col = 0; col < cols; col++) {
-      points.push({
-        baseX: col * gridSize,
-        baseY: row * gridSize,
-        x: col * gridSize,
-        y: row * gridSize,
-        vx: 0,
-        vy: 0,
-      });
-    }
+  for (let y = -spacing; y < height + spacing; y += spacing) {
+    horizontal.push({
+      baseY: y,
+      y: y,
+      phase: Math.random() * Math.PI * 2,
+      speed: 0.35 + Math.random() * 0.45,
+      amp: 8 + Math.random() * 12,
+    });
   }
 
-  const drawLine = (a, b) => {
-    ctx.beginPath();
-    ctx.moveTo(a.x, a.y);
-    ctx.lineTo(b.x, b.y);
-    ctx.stroke();
-  };
+  for (let x = -spacing; x < width + spacing; x += spacing) {
+    vertical.push({
+      baseX: x,
+      x: x,
+      phase: Math.random() * Math.PI * 2,
+      speed: 0.35 + Math.random() * 0.45,
+      amp: 8 + Math.random() * 12,
+    });
+  }
 
-  const animate = () => {
-    mouseX += (targetX - mouseX) * 0.12;
-    mouseY += (targetY - mouseY) * 0.12;
-
+  const drawLines = (time) => {
     ctx.clearRect(0, 0, width, height);
     ctx.lineWidth = 1;
-    ctx.strokeStyle = 'rgba(196, 181, 253, 0.24)';
+    ctx.strokeStyle = 'rgba(196, 181, 253, 0.18)';
 
-    for (let i = 0; i < points.length; i++) {
-      const point = points[i];
-      const dx = mouseX - point.x;
-      const dy = mouseY - point.y;
-      const distance = Math.hypot(dx, dy);
-      const influenceRadius = 170;
+    for (const line of horizontal) {
+      const drift = Math.sin(time * 0.0007 * line.speed + line.phase) * line.amp;
+      const dy = Math.abs(mouseY - (line.baseY + drift));
+      let y = line.baseY + drift;
 
-      if (distance < influenceRadius) {
-        const angle = Math.atan2(dy, dx);
-        const force = (1 - distance / influenceRadius) * 3.2;
-        point.vx += Math.cos(angle) * force * 1.6;
-        point.vy += Math.sin(angle) * force * 1.6;
+      if (dy < 150) {
+        const push = (1 - dy / 150) * 26;
+        y += mouseY < y ? -push : push;
       }
 
-      const springX = (point.baseX - point.x) * 0.04;
-      const springY = (point.baseY - point.y) * 0.04;
-      point.vx += springX;
-      point.vy += springY;
-      point.vx *= 0.8;
-      point.vy *= 0.8;
-      point.x += point.vx;
-      point.y += point.vy;
-    }
+      line.y += (y - line.y) * 0.1;
 
-    for (let row = 0; row < rows; row++) {
-      for (let col = 0; col < cols; col++) {
-        const idx = row * cols + col;
-        const point = points[idx];
+      ctx.beginPath();
+      for (let x = 0; x <= width; x += 10) {
+        const wave = Math.sin((x * 0.04) + time * 0.001 + line.phase) * 4;
+        const px = x;
+        const py = line.y + wave;
 
-        if (col < cols - 1) {
-          drawLine(point, points[idx + 1]);
-        }
-
-        if (row < rows - 1) {
-          drawLine(point, points[idx + cols]);
+        if (x === 0) {
+          ctx.moveTo(px, py);
+        } else {
+          ctx.lineTo(px, py);
         }
       }
+      ctx.stroke();
     }
 
+    ctx.strokeStyle = 'rgba(167, 139, 250, 0.14)';
+
+    for (const line of vertical) {
+      const drift = Math.sin(time * 0.0007 * line.speed + line.phase) * line.amp;
+      const dx = Math.abs(mouseX - (line.baseX + drift));
+      let x = line.baseX + drift;
+
+      if (dx < 150) {
+        const push = (1 - dx / 150) * 26;
+        x += mouseX < x ? -push : push;
+      }
+
+      line.x += (x - line.x) * 0.1;
+
+      ctx.beginPath();
+      for (let y = 0; y <= height; y += 10) {
+        const wave = Math.sin((y * 0.04) + time * 0.001 + line.phase) * 4;
+        const px = line.x + wave;
+        const py = y;
+
+        if (y === 0) {
+          ctx.moveTo(px, py);
+        } else {
+          ctx.lineTo(px, py);
+        }
+      }
+      ctx.stroke();
+    }
+  };
+
+  const animate = (time) => {
+    mouseX += (window.innerWidth * 0.5 - mouseX) * 0.01;
+    mouseY += (window.innerHeight * 0.5 - mouseY) * 0.01;
+
+    drawLines(time);
     requestAnimationFrame(animate);
   };
 
   document.addEventListener('mousemove', (e) => {
-    targetX = e.clientX;
-    targetY = e.clientY;
+    mouseX = e.clientX;
+    mouseY = e.clientY;
   });
 
   document.addEventListener('mouseleave', () => {
-    targetX = width / 2;
-    targetY = height / 2;
+    mouseX = width / 2;
+    mouseY = height / 2;
   });
 
   window.addEventListener('resize', () => {
@@ -107,13 +124,11 @@ const createCursorEffect = () => {
     height = window.innerHeight;
     canvas.width = width;
     canvas.height = height;
-    targetX = width / 2;
-    targetY = height / 2;
-    mouseX = targetX;
-    mouseY = targetY;
+    mouseX = width / 2;
+    mouseY = height / 2;
   });
 
-  animate();
+  requestAnimationFrame(animate);
 };
 
 if (document.readyState === 'loading') {
