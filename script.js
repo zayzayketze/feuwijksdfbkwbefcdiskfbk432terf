@@ -16,8 +16,8 @@ const createCursorEffect = () => {
   canvas.width = width;
   canvas.height = height;
 
-  const nodeCount = 420;
-  const connectionRange = 260;
+  const nodeCount = 1000;
+  const connectionRange = 320;
   const nodes = [];
 
   for (let i = 0; i < nodeCount; i++) {
@@ -30,7 +30,7 @@ const createCursorEffect = () => {
       vy: 0,
       phase: Math.random() * Math.PI * 2,
       drift: 0.4 + Math.random() * 0.8,
-      radius: 1.6 + Math.random() * 2.3,
+      radius: 1.8 + Math.random() * 2.6,
     });
   }
 
@@ -92,7 +92,7 @@ const createCursorEffect = () => {
           const alpha = (1 - distance / connectionRange) * 0.9;
           ctx.beginPath();
           ctx.strokeStyle = `rgba(196, 181, 253, ${alpha})`;
-          ctx.lineWidth = 1.1;
+          ctx.lineWidth = 1.4;
           ctx.moveTo(a.x, a.y);
           ctx.lineTo(b.x, b.y);
           ctx.stroke();
