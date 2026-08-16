@@ -1,22 +1,22 @@
 :root {
-  --bg: #060b14;
-  --bg-elevated: #0f1726;
-  --panel: rgba(17, 24, 39, 0.8);
-  --panel-strong: #111b2e;
-  --line: rgba(148, 163, 184, 0.18);
-  --text: #e5edf8;
-  --muted: #9aa9c2;
-  --primary: #7c9cff;
-  --primary-strong: #92b0ff;
-  --accent: #7ef0d4;
-  --shadow: rgba(2, 6, 23, 0.75);
-  --discord-bg: #2b2d31;
-  --discord-panel: #303338;
-  --discord-panel-alt: #2f3136;
-  --discord-border: rgba(255, 255, 255, 0.08);
-  --discord-blurple: #5865f2;
-  --discord-accent: #b7c2ff;
-  --discord-soft: rgba(88, 101, 242, 0.12);
+  --bg: #0a0e14;
+  --bg-elevated: #121821;
+  --panel: rgba(25, 32, 45, 0.8);
+  --panel-strong: #16202d;
+  --line: rgba(160, 174, 192, 0.12);
+  --text: #e8ecf1;
+  --muted: #9ca3af;
+  --primary: #a78bfa;
+  --primary-strong: #c4b5fd;
+  --accent: #d8b4fe;
+  --shadow: rgba(6, 8, 14, 0.8);
+  --discord-bg: #1a1d23;
+  --discord-panel: #2a2d33;
+  --discord-panel-alt: #242731;
+  --discord-border: rgba(255, 255, 255, 0.06);
+  --discord-blurple: #7c3aed;
+  --discord-accent: #e9d5ff;
+  --discord-soft: rgba(124, 58, 237, 0.12);
 }
 
 * {
@@ -31,9 +31,9 @@ body {
   margin: 0;
   font-family: "Inter", sans-serif;
   background:
-    radial-gradient(circle at top, rgba(88, 101, 242, 0.18), transparent 32%),
-    radial-gradient(circle at bottom right, rgba(126, 240, 212, 0.06), transparent 25%),
-    linear-gradient(180deg, #030712 0%, #09111f 100%);
+    radial-gradient(circle at top, rgba(124, 58, 237, 0.14), transparent 32%),
+    radial-gradient(circle at bottom right, rgba(168, 139, 250, 0.04), transparent 25%),
+    linear-gradient(180deg, #0a0d12 0%, #131a26 100%);
   color: var(--text);
 }
 
@@ -87,28 +87,28 @@ a {
 }
 
 .brand span {
-  background: linear-gradient(135deg, #a8d8ff 0%, #7c9cff 25%, #7ef0d4 50%, #8b7dff 75%, #d8b4ff 100%);
+  background: linear-gradient(135deg, #e9d5ff 0%, #d8b4fe 25%, #c4b5fd 50%, #a78bfa 75%, #a78bfa 100%);
   background-size: 220% 220%;
   -webkit-background-clip: text;
   background-clip: text;
   -webkit-text-fill-color: transparent;
   color: transparent;
-  text-shadow: 0 0 14px rgba(124, 156, 255, 0.14), 0 0 24px rgba(126, 240, 212, 0.18);
+  text-shadow: 0 0 14px rgba(168, 139, 250, 0.14), 0 0 24px rgba(196, 181, 253, 0.18);
   animation: brandNeonShift 4s ease-in-out infinite alternate;
 }
 
 @keyframes brandNeonShift {
   0% {
     background-position: 0% 50%;
-    filter: drop-shadow(0 0 8px rgba(124, 156, 255, 0.25));
+    filter: drop-shadow(0 0 8px rgba(168, 139, 250, 0.25));
   }
   50% {
     background-position: 100% 50%;
-    filter: drop-shadow(0 0 12px rgba(126, 240, 212, 0.35));
+    filter: drop-shadow(0 0 12px rgba(167, 139, 250, 0.35));
   }
   100% {
     background-position: 50% 100%;
-    filter: drop-shadow(0 0 10px rgba(139, 125, 255, 0.3));
+    filter: drop-shadow(0 0 10px rgba(139, 92, 246, 0.3));
   }
 }
 
@@ -118,7 +118,7 @@ a {
 
 .brand-logo {
   flex-shrink: 0;
-  filter: drop-shadow(0 0 12px rgba(124, 156, 255, 0.4));
+  filter: drop-shadow(0 0 12px rgba(168, 139, 250, 0.4));
   animation: logoFloat 3s ease-in-out infinite;
   border-radius: 10px;
 }
@@ -141,16 +141,16 @@ a {
   width: 40px;
   height: 40px;
   border-radius: 12px;
-  background: rgba(124, 156, 255, 0.1);
+  background: rgba(168, 139, 250, 0.1);
   color: var(--primary);
   transition: all 0.2s ease;
-  border: 1px solid rgba(124, 156, 255, 0.2);
+  border: 1px solid rgba(168, 139, 250, 0.2);
 }
 
 .social-link:hover {
-  background: rgba(124, 156, 255, 0.2);
+  background: rgba(168, 139, 250, 0.2);
   transform: translateY(-2px);
-  box-shadow: 0 8px 16px rgba(124, 156, 255, 0.2);
+  box-shadow: 0 8px 16px rgba(168, 139, 250, 0.2);
 }
 
 .nav-links {
@@ -188,17 +188,18 @@ a {
 
 .button-primary {
   padding: 0.95rem 1.5rem;
-  background: linear-gradient(135deg, #7b8cff 0%, #5865f2 100%);
-  color: #f5f7ff;
-  box-shadow: 0 16px 28px rgba(88, 101, 242, 0.32), inset 0 1px 0 rgba(255, 255, 255, 0.1);
+  background: linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%);
+  color: #faf9f7;
+  box-shadow: 0 16px 28px rgba(124, 58, 237, 0.32), inset 0 1px 0 rgba(255, 255, 255, 0.1);
   border: 1px solid rgba(255, 255, 255, 0.12);
   font-weight: 600;
   transition: all 0.3s ease;
 }
 
 .button-primary:hover {
-  box-shadow: 0 20px 40px rgba(88, 101, 242, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.15);
+  box-shadow: 0 20px 40px rgba(124, 58, 237, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.15);
   transform: translateY(-2px);
+  background: linear-gradient(135deg, #a78bfa 0%, #8b5cf6 100%);
 }
 
 .button-secondary {
@@ -212,8 +213,8 @@ a {
 }
 
 .button-secondary:hover {
-  border-color: rgba(88, 101, 242, 0.4);
-  background: rgba(88, 101, 242, 0.06);
+  border-color: rgba(124, 58, 237, 0.4);
+  background: rgba(124, 58, 237, 0.06);
   color: var(--primary-strong);
 }
 
@@ -226,8 +227,8 @@ a {
   padding-top: 80px;
   padding-bottom: 64px;
   background:
-    radial-gradient(circle at 0% 50%, rgba(88, 101, 242, 0.08), transparent 40%),
-    radial-gradient(circle at 100% 100%, rgba(126, 240, 212, 0.04), transparent 35%);
+    radial-gradient(circle at 0% 50%, rgba(124, 58, 237, 0.08), transparent 40%),
+    radial-gradient(circle at 100% 100%, rgba(168, 139, 250, 0.04), transparent 35%);
 }
 
 .eyebrow {
@@ -238,7 +239,7 @@ a {
   font-size: 0.72rem;
   font-weight: 700;
   opacity: 0.9;
-  text-shadow: 0 2px 8px rgba(126, 240, 212, 0.15);
+  text-shadow: 0 2px 8px rgba(168, 139, 250, 0.15);
 }
 
 .hero-copy h1,
@@ -252,7 +253,7 @@ a {
 .hero-copy h1 {
   font-size: clamp(3.1rem, 6vw, 6rem);
   max-width: 620px;
-  background: linear-gradient(135deg, #f5f7ff 0%, #b7c2ff 100%);
+  background: linear-gradient(135deg, #e9d5ff 0%, #d8b4fe 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
@@ -313,11 +314,11 @@ a {
   width: min(100%, 480px);
   border: 1px solid var(--discord-border);
   border-left: 4px solid var(--discord-blurple);
-  background: linear-gradient(180deg, rgba(47, 49, 54, 0.96), rgba(35, 39, 42, 0.98));
+  background: linear-gradient(180deg, rgba(37, 38, 48, 0.96), rgba(26, 28, 36, 0.98));
   border-radius: 14px;
   box-shadow:
     0 24px 48px rgba(0, 0, 0, 0.3),
-    0 0 1px rgba(88, 101, 242, 0.1) inset;
+    0 0 1px rgba(124, 58, 237, 0.1) inset;
   overflow: hidden;
   transition: all 0.4s cubic-bezier(0.23, 1, 0.320, 1);
 }
@@ -325,9 +326,9 @@ a {
 .server-card:hover {
   box-shadow:
     0 32px 64px rgba(0, 0, 0, 0.4),
-    0 0 1px rgba(88, 101, 242, 0.2) inset;
+    0 0 1px rgba(124, 58, 237, 0.2) inset;
   transform: translateY(-4px);
-  border-left-color: #7b8cff;
+  border-left-color: #a78bfa;
 }
 
 .card-topline {
@@ -336,7 +337,7 @@ a {
   gap: 10px;
   padding: 18px 22px;
   border-bottom: 1px solid var(--discord-border);
-  background: linear-gradient(90deg, rgba(88, 101, 242, 0.1), rgba(88, 101, 242, 0.05));
+  background: linear-gradient(90deg, rgba(124, 58, 237, 0.1), rgba(124, 58, 237, 0.05));
   color: var(--text);
   font-weight: 600;
   letter-spacing: 0.04em;
@@ -347,8 +348,8 @@ a {
   width: 11px;
   height: 11px;
   border-radius: 50%;
-  background: #6ef7a6;
-  box-shadow: 0 0 12px rgba(110, 247, 166, 0.7);
+  background: #c4b5fd;
+  box-shadow: 0 0 12px rgba(196, 181, 253, 0.7);
 }
 
 .card-content {
@@ -388,8 +389,8 @@ a {
 }
 
 .stat-grid > div:hover {
-  background: rgba(88, 101, 242, 0.04);
-  border-color: rgba(88, 101, 242, 0.2);
+  background: rgba(124, 58, 237, 0.04);
+  border-color: rgba(124, 58, 237, 0.2);
 }
 
 .stat-value {
@@ -431,7 +432,7 @@ a {
   border: 1px solid var(--discord-border);
   border-left: 4px solid var(--discord-blurple);
   border-radius: 14px;
-  background: linear-gradient(180deg, rgba(47, 49, 54, 0.96), rgba(35, 39, 42, 0.98));
+  background: linear-gradient(180deg, rgba(37, 38, 48, 0.96), rgba(26, 28, 36, 0.98));
   box-shadow: none;
 }
 
@@ -442,7 +443,7 @@ a {
   place-items: center;
   margin-bottom: 20px;
   border-radius: 14px;
-  background: linear-gradient(135deg, rgba(124, 156, 255, 0.18), rgba(126, 240, 212, 0.15));
+  background: linear-gradient(135deg, rgba(168, 139, 250, 0.18), rgba(216, 180, 254, 0.15));
   color: var(--accent);
   font-size: 1.5rem;
   font-weight: 800;
@@ -474,7 +475,7 @@ a {
   border: 1px solid var(--discord-border);
   border-left: 4px solid var(--discord-blurple);
   border-radius: 14px;
-  background: linear-gradient(180deg, rgba(47, 49, 54, 0.96), rgba(35, 39, 42, 0.98));
+  background: linear-gradient(180deg, rgba(37, 38, 48, 0.96), rgba(26, 28, 36, 0.98));
 }
 
 .stat-bar div {
@@ -504,7 +505,7 @@ a {
   border: 1px solid var(--discord-border);
   border-left: 4px solid var(--discord-blurple);
   border-radius: 14px;
-  background: linear-gradient(180deg, rgba(47, 49, 54, 0.96), rgba(35, 39, 42, 0.98));
+  background: linear-gradient(180deg, rgba(37, 38, 48, 0.96), rgba(26, 28, 36, 0.98));
   padding: 28px 24px;
 }
 
@@ -565,12 +566,12 @@ a {
   border-left: 4px solid var(--discord-blurple);
   border-radius: 14px;
   overflow: hidden;
-  background: rgba(47, 49, 54, 0.8);
+  background: rgba(37, 38, 48, 0.8);
   transition: all 0.2s ease;
 }
 
 .faq-item:hover {
-  border-color: rgba(88, 101, 242, 0.5);
+  border-color: rgba(124, 58, 237, 0.5);
   background: rgba(54, 57, 63, 0.9);
 }
 
@@ -661,7 +662,7 @@ a {
   border: 1px solid var(--discord-border);
   border-left: 4px solid var(--discord-blurple);
   border-radius: 14px;
-  background: linear-gradient(180deg, rgba(47, 49, 54, 0.96), rgba(35, 39, 42, 0.98));
+  background: linear-gradient(180deg, rgba(37, 38, 48, 0.96), rgba(26, 28, 36, 0.98));
   box-shadow: none;
   transition: transform 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
 }
@@ -686,7 +687,7 @@ a {
   content: "";
   position: absolute;
   inset: 0;
-  background: linear-gradient(90deg, rgba(88, 101, 242, 0.08), transparent 30%);
+  background: linear-gradient(90deg, rgba(124, 58, 237, 0.08), transparent 30%);
   pointer-events: none;
 }
 
@@ -708,7 +709,7 @@ a {
 .rule-item:hover,
 .staff-card:hover {
   transform: translateY(-2px);
-  border-color: rgba(124, 156, 255, 0.45);
+  border-color: rgba(168, 139, 250, 0.45);
   box-shadow: 0 10px 18px rgba(0, 0, 0, 0.14);
 }
 
@@ -783,8 +784,8 @@ a {
   height: 24px;
   padding: 0 8px;
   border-radius: 999px;
-  background: rgba(113, 128, 255, 0.22);
-  color: #c5d2ff;
+  background: rgba(168, 139, 250, 0.22);
+  color: #e9d5ff;
   font-weight: 700;
   letter-spacing: 0.08em;
 }
@@ -815,9 +816,9 @@ a {
 }
 
 .join-panel:hover {
-  border-color: rgba(124, 156, 255, 0.4);
-  background: linear-gradient(135deg, rgba(124, 156, 255, 0.15), rgba(126, 240, 212, 0.11));
-  box-shadow: 0 0 80px rgba(124, 156, 255, 0.15);
+  border-color: rgba(168, 139, 250, 0.4);
+  background: linear-gradient(135deg, rgba(168, 139, 250, 0.15), rgba(167, 139, 250, 0.11));
+  box-shadow: 0 0 80px rgba(168, 139, 250, 0.15);
 }
 
 .join-panel h2 {
@@ -841,7 +842,7 @@ a {
   padding: 28px 30px;
   border: 1px solid var(--line);
   border-radius: 22px;
-  background: linear-gradient(135deg, rgba(124, 156, 255, 0.1), rgba(126, 240, 212, 0.06));
+  background: linear-gradient(135deg, rgba(168, 139, 250, 0.1), rgba(167, 139, 250, 0.06));
 }
 
 .footer {
@@ -941,12 +942,12 @@ a {
   border: 1px solid var(--discord-border);
   border-left: 4px solid var(--discord-blurple);
   border-radius: 14px;
-  background: linear-gradient(180deg, rgba(47, 49, 54, 0.96), rgba(35, 39, 42, 0.98));
+  background: linear-gradient(180deg, rgba(37, 38, 48, 0.96), rgba(26, 28, 36, 0.98));
   transition: all 0.2s ease;
 }
 
 .highlight-card:hover {
-  border-color: rgba(124, 156, 255, 0.45);
+  border-color: rgba(168, 139, 250, 0.45);
   background: linear-gradient(180deg, rgba(54, 57, 63, 0.96), rgba(42, 43, 47, 0.98));
   transform: translateY(-2px);
 }
@@ -987,7 +988,7 @@ a {
   border: 1px solid var(--discord-border);
   border-left: 4px solid var(--discord-blurple);
   border-radius: 14px;
-  background: linear-gradient(180deg, rgba(47, 49, 54, 0.96), rgba(35, 39, 42, 0.98));
+  background: linear-gradient(180deg, rgba(37, 38, 48, 0.96), rgba(26, 28, 36, 0.98));
 }
 
 .detail-card h3 {
@@ -1013,13 +1014,13 @@ a {
   border: 1px solid var(--discord-border);
   border-left: 4px solid var(--discord-blurple);
   border-radius: 14px;
-  background: linear-gradient(180deg, rgba(47, 49, 54, 0.96), rgba(35, 39, 42, 0.98));
+  background: linear-gradient(180deg, rgba(37, 38, 48, 0.96), rgba(26, 28, 36, 0.98));
   text-align: center;
   transition: all 0.2s ease;
 }
 
 .step-card:hover {
-  border-color: rgba(124, 156, 255, 0.45);
+  border-color: rgba(168, 139, 250, 0.45);
   background: linear-gradient(180deg, rgba(54, 57, 63, 0.96), rgba(42, 43, 47, 0.98));
 }
 
@@ -1030,7 +1031,7 @@ a {
   line-height: 50px;
   border-radius: 50%;
   background: linear-gradient(135deg, var(--primary), var(--primary-strong));
-  color: #08111d;
+  color: #f5f3ff;
   font-size: 1.8rem;
   font-weight: 800;
   margin-bottom: 16px;
@@ -1146,7 +1147,7 @@ a {
   border: 1px solid var(--discord-border);
   border-left: 4px solid var(--discord-blurple);
   border-radius: 14px;
-  background: linear-gradient(180deg, rgba(47, 49, 54, 0.96), rgba(35, 39, 42, 0.98));
+  background: linear-gradient(180deg, rgba(37, 38, 48, 0.96), rgba(26, 28, 36, 0.98));
 }
 
 .staff-avatar {
@@ -1155,7 +1156,7 @@ a {
   display: grid;
   place-items: center;
   border-radius: 18px;
-  background: linear-gradient(135deg, rgba(124, 156, 255, 0.2), rgba(126, 240, 212, 0.15));
+  background: linear-gradient(135deg, rgba(168, 139, 250, 0.2), rgba(216, 180, 254, 0.15));
   color: var(--accent);
   font-size: 1.5rem;
   font-weight: 800;
@@ -1286,14 +1287,14 @@ a {
   border: 1px solid var(--discord-border);
   border-left: 4px solid var(--discord-blurple);
   border-radius: 14px;
-  background: linear-gradient(180deg, rgba(47, 49, 54, 0.96), rgba(35, 39, 42, 0.98));
+  background: linear-gradient(180deg, rgba(37, 38, 48, 0.96), rgba(26, 28, 36, 0.98));
   transition: all 0.2s ease;
 }
 
 .cta-panel:hover {
-  border-color: rgba(124, 156, 255, 0.4);
-  background: linear-gradient(135deg, rgba(124, 156, 255, 0.15), rgba(126, 240, 212, 0.11));
-  box-shadow: 0 0 80px rgba(124, 156, 255, 0.15);
+  border-color: rgba(168, 139, 250, 0.4);
+  background: linear-gradient(135deg, rgba(168, 139, 250, 0.15), rgba(167, 139, 250, 0.11));
+  box-shadow: 0 0 80px rgba(168, 139, 250, 0.15);
 }
 
 .cta-buttons {
@@ -1308,7 +1309,7 @@ a {
   border: 1px solid var(--discord-border);
   border-left: 4px solid var(--discord-blurple);
   border-radius: 14px;
-  background: linear-gradient(180deg, rgba(47, 49, 54, 0.96), rgba(35, 39, 42, 0.98));
+  background: linear-gradient(180deg, rgba(37, 38, 48, 0.96), rgba(26, 28, 36, 0.98));
 }
 
 .cta-box h2 {
