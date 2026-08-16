@@ -149,28 +149,38 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     async function apiFetch(path, options = {}) {
-      // Configure API endpoint - can be different from frontend URL
-      const API_BASE = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1'
-        ? `http://localhost:3000`
-        : window.location.origin;
-      
-      const url = API_BASE + path;
-      const response = await fetch(url, {
-        ...options,
-        headers: {
-          'Content-Type': 'application/json',
-          ...(options.headers || {}),
-        },
-      });
+      const apiBases = [
+        window.location.origin,
+        'http://localhost:3000',
+        'http://127.0.0.1:3000',
+      ].filter((value, index, array) => value && array.indexOf(value) === index);
 
-      const contentType = response.headers.get('content-type') || '';
-      const data = contentType.includes('application/json') ? await response.json() : null;
+      let lastError = null;
+      for (const base of apiBases) {
+        const url = `${base}${path}`;
+        try {
+          const response = await fetch(url, {
+            ...options,
+            headers: {
+              'Content-Type': 'application/json',
+              ...(options.headers || {}),
+            },
+          });
 
-      if (!response.ok) {
-        throw new Error(data?.error || 'Request failed.');
+          const contentType = response.headers.get('content-type') || '';
+          const data = contentType.includes('application/json') ? await response.json() : null;
+
+          if (!response.ok) {
+            throw new Error(data?.error || 'Request failed.');
+          }
+
+          return data;
+        } catch (error) {
+          lastError = error;
+        }
       }
 
-      return data;
+      throw lastError || new Error('Request failed.');
     }
 
     function renderModuleOptions(selectedModules = {}) {
@@ -244,6 +254,7 @@ document.addEventListener('DOMContentLoaded', () => {
             .filter(([, value]) => value)
             .map(([key]) => key)
             .join(', ') || 'No modules enabled';
+          const githubRepo = bot.githubRepo ? `<div class="bot-meta"><span>GitHub: <a href="${bot.githubRepo}" target="_blank" rel="noreferrer">${bot.githubRepo.replace(/^https?:\/\//i, '')}</a></span></div>` : '';
 
           return `
             <article class="bot-card" data-bot-id="${bot.id}">
@@ -258,6 +269,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 <span>Owner: ${user.username}</span>
                 <span>Created: ${new Date(bot.createdAt).toLocaleDateString()}</span>
               </div>
+              ${githubRepo}
               <div class="module-list">
                 <strong>Modules</strong>
                 <p>${enabledModules}</p>
@@ -384,6 +396,7 @@ document.addEventListener('DOMContentLoaded', () => {
       const form = event.currentTarget;
       const formData = new FormData(form);
       const token = String(formData.get('botToken') || '').trim();
+      const githubRepo = String(formData.get('githubRepo') || '').trim();
 
       // Validate bot token
       if (!isValidBotToken(token)) {
@@ -400,7 +413,7 @@ document.addEventListener('DOMContentLoaded', () => {
       try {
         await apiFetch('/api/bots', {
           method: 'POST',
-          body: JSON.stringify({ userId: user.id, name: 'Discord Bot', token, modules }),
+          body: JSON.stringify({ userId: user.id, name: 'Discord Bot', token, modules, githubRepo }),
         });
         form.reset();
         await renderAuthState();
@@ -494,18 +507,25 @@ document.addEventListener('DOMContentLoaded', () => {
     const botGoogleButton = document.getElementById('bot-google-signin-button');
     const enableGoogleButton = (targetButton) => {
       if (!targetButton) return;
+      targetButton.innerHTML = '';
 
-      fetch('/api/config')
-        .then((response) => response.json())
-        .then((config) => {
+      const initializeGoogle = async () => {
+        try {
+          const config = await apiFetch('/api/config');
           const clientId = config.googleClientId || '';
           if (!clientId) {
             targetButton.innerHTML = '<div class="status-text">Google sign-in is not configured yet. Add your client ID to .env.</div>';
             return;
           }
 
-          if (window.google?.accounts?.id) {
-            window.google.accounts.id.initialize({
+          const render = () => {
+            const googleApi = window.google?.accounts?.id;
+            if (!googleApi) {
+              setTimeout(render, 250);
+              return;
+            }
+
+            googleApi.initialize({
               client_id: clientId,
               callback: async (response) => {
                 try {
@@ -524,17 +544,21 @@ document.addEventListener('DOMContentLoaded', () => {
               },
             });
 
-            window.google.accounts.id.renderButton(targetButton, {
+            googleApi.renderButton(targetButton, {
               theme: 'outline',
               size: 'large',
               text: 'continue_with',
               shape: 'pill',
             });
-          }
-        })
-        .catch(() => {
+          };
+
+          render();
+        } catch (error) {
           targetButton.innerHTML = '<div class="status-text">Google sign-in could not be loaded from the server config.</div>';
-        });
+        }
+      };
+
+      initializeGoogle();
     };
 
     if (googleButton) enableGoogleButton(googleButton);

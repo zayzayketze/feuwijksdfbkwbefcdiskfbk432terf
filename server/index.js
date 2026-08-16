@@ -104,6 +104,24 @@ function saveBotsForUser(userId, bots) {
   botProfiles.set(userId, bots);
 }
 
+function normalizeGitHubRepo(rawRepo) {
+  const repo = String(rawRepo || '').trim();
+  if (!repo) {
+    return '';
+  }
+
+  const normalized = repo.replace(/^https?:\/\//i, '').replace(/^www\./i, '');
+  if (/^github\.com\//i.test(normalized)) {
+    return `https://${normalized}`;
+  }
+
+  if (/^github\.com$/i.test(normalized)) {
+    return 'https://github.com';
+  }
+
+  return repo.startsWith('http') ? repo : `https://${repo}`;
+}
+
 app.get('/api/health', (req, res) => {
   res.json({ ok: true, service: 'voidhaven-auth-bot-hosting' });
 });
@@ -262,7 +280,7 @@ app.get('/api/profile/:userId', (req, res) => {
 });
 
 app.post('/api/bots', (req, res) => {
-  const { userId, name, token, modules = {} } = req.body || {};
+  const { userId, name, token, modules = {}, githubRepo = '' } = req.body || {};
 
   if (!userId) {
     return res.status(401).json({ error: 'You must be signed in to host a bot.' });
@@ -289,6 +307,7 @@ app.post('/api/bots', (req, res) => {
     ownerId: user.id,
     createdAt: new Date().toISOString(),
     status: 'idle',
+    githubRepo: normalizeGitHubRepo(githubRepo),
     modules: {
       moderation: Boolean(modules.moderation),
       antiSpam: Boolean(modules.antiSpam),

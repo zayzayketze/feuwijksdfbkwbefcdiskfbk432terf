@@ -83,6 +83,24 @@ function normalizeModules(rawModules = {}) {
   return normalized;
 }
 
+function normalizeGitHubRepo(rawRepo) {
+  const repo = String(rawRepo || '').trim();
+  if (!repo) {
+    return '';
+  }
+
+  const normalized = repo.replace(/^https?:\/\//i, '').replace(/^www\./i, '');
+  if (/^github\.com\//i.test(normalized)) {
+    return `https://${normalized}`;
+  }
+
+  if (/^github\.com$/i.test(normalized)) {
+    return 'https://github.com';
+  }
+
+  return repo.startsWith('http') ? repo : `https://${repo}`;
+}
+
 function sanitizeBot(bot) {
   if (!bot || typeof bot !== 'object') {
     return null;
@@ -95,6 +113,7 @@ function sanitizeBot(bot) {
     ownerId: String(bot.ownerId || ''),
     createdAt: bot.createdAt || new Date().toISOString(),
     status: 'idle',
+    githubRepo: normalizeGitHubRepo(bot.githubRepo),
     modules: normalizeModules(bot.modules),
   };
 }
@@ -160,7 +179,7 @@ function getUserById(userId) {
   return state.users.find((user) => user.id === userId) || null;
 }
 
-function createBotForUser(userId, { name, token, modules = {} }) {
+function createBotForUser(userId, { name, token, modules = {}, githubRepo = '' }) {
   const state = getStorage();
   const user = state.users.find((entry) => entry.id === userId);
 
@@ -178,6 +197,7 @@ function createBotForUser(userId, { name, token, modules = {} }) {
     token,
     ownerId: user.id,
     createdAt: new Date().toISOString(),
+    githubRepo,
     modules,
   });
 

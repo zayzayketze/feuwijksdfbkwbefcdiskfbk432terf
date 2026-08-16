@@ -53,3 +53,18 @@ test('each account is capped at 3 hosted bots and ownership stays with the accou
   const deleted = deleteBotForUser(userB.id, 'not-real-bot');
   assert.equal(deleted, false);
 });
+
+test('hosted bots retain a GitHub repo link when provided', () => {
+  resetBotHostingStorage();
+
+  const user = createUser({ username: 'carol', email: 'carol@example.com', password: 'Password123' });
+  const bot = createBotForUser(user.id, {
+    name: 'GitHub Bot',
+    token: 'MNzkxYzQxMjQ1NTEyMjA4MjY1N2R0b3A1',
+    modules: { moderation: true },
+    githubRepo: 'https://github.com/voidhaven/bot-github-bot'
+  });
+
+  assert.equal(bot.githubRepo, 'https://github.com/voidhaven/bot-github-bot');
+  assert.equal(listUserBots(user.id)[0].githubRepo, 'https://github.com/voidhaven/bot-github-bot');
+});

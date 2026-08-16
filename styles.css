@@ -1014,6 +1014,20 @@ a {
   margin-top: 6px;
 }
 
+.google-auth-row {
+  display: flex;
+  justify-content: center;
+  margin-top: 18px;
+  min-height: 54px;
+}
+
+.google-auth-row > div {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 220px;
+}
+
 .profile-section {
   display: grid;
   gap: 18px;
