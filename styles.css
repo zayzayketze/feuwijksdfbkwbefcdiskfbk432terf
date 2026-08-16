@@ -1411,10 +1411,20 @@ a {
     flex-wrap: wrap;
     justify-content: center;
     padding: 18px 0;
+    gap: 12px;
   }
 
   .nav-links {
-    display: none;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 10px 14px;
+    width: 100%;
+  }
+
+  .nav-links a {
+    font-size: 0.8rem;
+    white-space: nowrap;
   }
 
   .nav-actions {

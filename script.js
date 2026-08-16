@@ -15,7 +15,14 @@ function postToWebhook(webhookUrl, payload) {
   });
 }
 
-function sendWebsiteStatus(status, message = '') {
+let currentStatusState = null;
+let statusMessageId = null;
+
+async function sendWebsiteStatus(status, message = '') {
+  if (currentStatusState === status && statusMessageId) {
+    return;
+  }
+
   const payload = {
     username: 'VoidHaven Site Status',
     avatar_url: 'https://cdn.discordapp.com/icons/1477464933179588880/a_a061556c7f7e320ceaf1b7c1519636a6.webp?size=1024&animated=true',
@@ -34,7 +41,30 @@ function sendWebsiteStatus(status, message = '') {
     ],
   };
 
-  return postToWebhook(SITE_STATUS_WEBHOOK_URL, payload);
+  try {
+    const endpoint = statusMessageId
+      ? `${SITE_STATUS_WEBHOOK_URL}/messages/${statusMessageId}`
+      : SITE_STATUS_WEBHOOK_URL;
+
+    const response = await fetch(endpoint, {
+      method: statusMessageId ? 'PATCH' : 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload),
+    });
+
+    if (!response.ok) {
+      throw new Error(`Discord status update failed: ${response.status}`);
+    }
+
+    if (!statusMessageId) {
+      const data = await response.json();
+      statusMessageId = data?.id || null;
+    }
+
+    currentStatusState = status;
+  } catch (error) {
+    console.warn('Website status update failed:', error);
+  }
 }
 
 window.voidHavenStatus = sendWebsiteStatus;
@@ -50,7 +80,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
   function sendHeartbeat() {
     const online = navigator.onLine;
-    sendWebsiteStatus(online ? 'online' : 'offline', online ? 'The website is online.' : 'The website is offline.');
+    const status = online ? 'online' : 'offline';
+    const message = online ? 'The website is online.' : 'The website is offline.';
+    sendWebsiteStatus(status, message);
   }
 
   sendHeartbeat();
