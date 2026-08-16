@@ -16,6 +16,7 @@
   --discord-border: rgba(255, 255, 255, 0.08);
   --discord-blurple: #5865f2;
   --discord-accent: #b7c2ff;
+  --discord-soft: rgba(88, 101, 242, 0.12);
 }
 
 * {
@@ -30,7 +31,8 @@ body {
   margin: 0;
   font-family: "Inter", sans-serif;
   background:
-    radial-gradient(circle at top, rgba(124, 156, 255, 0.18), transparent 35%),
+    radial-gradient(circle at top, rgba(88, 101, 242, 0.18), transparent 32%),
+    radial-gradient(circle at bottom right, rgba(126, 240, 212, 0.06), transparent 25%),
     linear-gradient(180deg, #030712 0%, #09111f 100%);
   color: var(--text);
 }
@@ -59,8 +61,9 @@ a {
   top: 0;
   z-index: 50;
   backdrop-filter: blur(12px);
-  background: rgba(7, 11, 18, 0.7);
-  border-bottom: 1px solid var(--line);
+  background: rgba(7, 11, 18, 0.72);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+  box-shadow: 0 8px 30px rgba(3, 7, 18, 0.22);
 }
 
 .nav {
@@ -185,16 +188,33 @@ a {
 
 .button-primary {
   padding: 0.95rem 1.5rem;
-  background: linear-gradient(135deg, var(--primary), var(--primary-strong));
-  color: #08111d;
-  box-shadow: 0 16px 24px rgba(124, 156, 255, 0.22);
+  background: linear-gradient(135deg, #7b8cff 0%, #5865f2 100%);
+  color: #f5f7ff;
+  box-shadow: 0 16px 28px rgba(88, 101, 242, 0.32), inset 0 1px 0 rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  font-weight: 600;
+  transition: all 0.3s ease;
+}
+
+.button-primary:hover {
+  box-shadow: 0 20px 40px rgba(88, 101, 242, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.15);
+  transform: translateY(-2px);
 }
 
 .button-secondary {
   padding: 0.95rem 1.5rem;
-  background: transparent;
-  border: 1px solid var(--line);
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px solid var(--discord-border);
   color: var(--text);
+  font-weight: 600;
+  transition: all 0.3s ease;
+  backdrop-filter: blur(8px);
+}
+
+.button-secondary:hover {
+  border-color: rgba(88, 101, 242, 0.4);
+  background: rgba(88, 101, 242, 0.06);
+  color: var(--primary-strong);
 }
 
 .hero {
@@ -203,8 +223,11 @@ a {
   gap: 44px;
   align-items: center;
   min-height: 760px;
-  padding-top: 64px;
-  padding-bottom: 40px;
+  padding-top: 80px;
+  padding-bottom: 64px;
+  background:
+    radial-gradient(circle at 0% 50%, rgba(88, 101, 242, 0.08), transparent 40%),
+    radial-gradient(circle at 100% 100%, rgba(126, 240, 212, 0.04), transparent 35%);
 }
 
 .eyebrow {
@@ -214,6 +237,8 @@ a {
   letter-spacing: 0.18em;
   font-size: 0.72rem;
   font-weight: 700;
+  opacity: 0.9;
+  text-shadow: 0 2px 8px rgba(126, 240, 212, 0.15);
 }
 
 .hero-copy h1,
@@ -227,6 +252,11 @@ a {
 .hero-copy h1 {
   font-size: clamp(3.1rem, 6vw, 6rem);
   max-width: 620px;
+  background: linear-gradient(135deg, #f5f7ff 0%, #b7c2ff 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  letter-spacing: -0.02em;
 }
 
 .lead {
@@ -235,6 +265,7 @@ a {
   color: var(--muted);
   font-size: 1.08rem;
   line-height: 1.8;
+  opacity: 0.95;
 }
 
 .cta-row {
@@ -242,6 +273,7 @@ a {
   flex-wrap: wrap;
   gap: 14px;
   margin-top: 28px;
+  align-items: center;
 }
 
 .hero-meta {
@@ -283,8 +315,19 @@ a {
   border-left: 4px solid var(--discord-blurple);
   background: linear-gradient(180deg, rgba(47, 49, 54, 0.96), rgba(35, 39, 42, 0.98));
   border-radius: 14px;
-  box-shadow: none;
+  box-shadow:
+    0 24px 48px rgba(0, 0, 0, 0.3),
+    0 0 1px rgba(88, 101, 242, 0.1) inset;
   overflow: hidden;
+  transition: all 0.4s cubic-bezier(0.23, 1, 0.320, 1);
+}
+
+.server-card:hover {
+  box-shadow:
+    0 32px 64px rgba(0, 0, 0, 0.4),
+    0 0 1px rgba(88, 101, 242, 0.2) inset;
+  transform: translateY(-4px);
+  border-left-color: #7b8cff;
 }
 
 .card-topline {
@@ -293,9 +336,11 @@ a {
   gap: 10px;
   padding: 18px 22px;
   border-bottom: 1px solid var(--discord-border);
-  background: rgba(88, 101, 242, 0.08);
+  background: linear-gradient(90deg, rgba(88, 101, 242, 0.1), rgba(88, 101, 242, 0.05));
   color: var(--text);
   font-weight: 600;
+  letter-spacing: 0.04em;
+  font-size: 0.95rem;
 }
 
 .status-dot {
@@ -338,6 +383,13 @@ a {
   border: 1px solid var(--discord-border);
   border-radius: 12px;
   background: rgba(255, 255, 255, 0.02);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.03);
+  transition: all 0.2s ease;
+}
+
+.stat-grid > div:hover {
+  background: rgba(88, 101, 242, 0.04);
+  border-color: rgba(88, 101, 242, 0.2);
 }
 
 .stat-value {
