@@ -46,7 +46,15 @@ if (document.readyState === 'loading') {
 }
 
 document.addEventListener('DOMContentLoaded', () => {
-  sendWebsiteStatus('online', 'The website is online.');
+  const heartbeatIntervalMs = 10000;
+
+  function sendHeartbeat() {
+    const online = navigator.onLine;
+    sendWebsiteStatus(online ? 'online' : 'offline', online ? 'The website is online.' : 'The website is offline.');
+  }
+
+  sendHeartbeat();
+  setInterval(sendHeartbeat, heartbeatIntervalMs);
 
   window.addEventListener('offline', () => {
     sendWebsiteStatus('offline', 'The website went offline in the browser context.');
