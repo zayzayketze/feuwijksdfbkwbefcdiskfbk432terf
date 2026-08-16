@@ -16,8 +16,8 @@ const createCursorEffect = () => {
   canvas.width = width;
   canvas.height = height;
 
-  const nodeCount = 18;
-  const connectionRange = 100;
+  const nodeCount = 180;
+  const connectionRange = 180;
   const nodes = [];
 
   for (let i = 0; i < nodeCount; i++) {
@@ -59,21 +59,21 @@ const createCursorEffect = () => {
       const dx = mouseX - node.x;
       const dy = mouseY - node.y;
       const distance = Math.hypot(dx, dy) || 1;
-      const repulseDist = 150;
+      const repulseDist = 260;
 
       if (distance < repulseDist) {
-        const force = (1 - distance / repulseDist) * 1.8;
+        const force = (1 - distance / repulseDist) * 0.9;
         const angle = Math.atan2(dy, dx);
-        node.vx -= Math.cos(angle) * force * 8;
-        node.vy -= Math.sin(angle) * force * 8;
+        node.vx -= Math.cos(angle) * force * 4.8;
+        node.vy -= Math.sin(angle) * force * 4.8;
       }
 
-      node.vx += (node.baseX + driftX * 30 - node.x) * 0.015;
-      node.vy += (node.baseY + driftY * 30 - node.y) * 0.015;
-      node.x += node.vx + driftX;
-      node.y += node.vy + driftY;
-      node.vx *= 0.84;
-      node.vy *= 0.84;
+      node.vx += (node.baseX + driftX * 30 - node.x) * 0.008;
+      node.vy += (node.baseY + driftY * 30 - node.y) * 0.008;
+      node.x += node.vx + driftX * 0.3;
+      node.y += node.vy + driftY * 0.3;
+      node.vx *= 0.92;
+      node.vy *= 0.92;
     }
   };
 
@@ -89,10 +89,10 @@ const createCursorEffect = () => {
         const distance = Math.hypot(dx, dy);
 
         if (distance < connectionRange) {
-          const alpha = (1 - distance / connectionRange) * 0.8;
+          const alpha = (1 - distance / connectionRange) * 0.9;
           ctx.beginPath();
           ctx.strokeStyle = `rgba(196, 181, 253, ${alpha})`;
-          ctx.lineWidth = 1;
+          ctx.lineWidth = 1.1;
           ctx.moveTo(a.x, a.y);
           ctx.lineTo(b.x, b.y);
           ctx.stroke();
