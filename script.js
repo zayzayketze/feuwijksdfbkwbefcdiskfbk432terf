@@ -269,12 +269,38 @@ document.addEventListener('DOMContentLoaded', () => {
       }
     }
 
-    function setSession(user) {
-      localStorage.setItem(SESSION_KEY, JSON.stringify({ id: user.id, username: user.username }));
+    function setSession(user, token = '') {
+      localStorage.setItem(SESSION_KEY, JSON.stringify({
+        id: user.id,
+        username: user.username,
+        email: user.email,
+        avatar: user.avatar || '',
+        googleAuth: Boolean(user.googleAuth),
+        token,
+      }));
     }
 
     function clearSession() {
       localStorage.removeItem(SESSION_KEY);
+    }
+
+    async function apiFetch(path, options = {}) {
+      const response = await fetch(path, {
+        ...options,
+        headers: {
+          'Content-Type': 'application/json',
+          ...(options.headers || {}),
+        },
+      });
+
+      const contentType = response.headers.get('content-type') || '';
+      const data = contentType.includes('application/json') ? await response.json() : null;
+
+      if (!response.ok) {
+        throw new Error(data?.error || 'Request failed.');
+      }
+
+      return data;
     }
 
     function renderModuleOptions(selectedModules = {}) {
@@ -289,55 +315,72 @@ document.addEventListener('DOMContentLoaded', () => {
       }).join('');
     }
 
-    function renderBotList(user) {
+    async function renderBotList(user) {
       const botList = document.getElementById('bot-list');
       const botCount = document.getElementById('bot-count');
-      const totalBots = botHosting.listUserBots ? botHosting.listUserBots(user.id) : [];
-      const activeBots = totalBots.length;
 
-      if (botCount) {
-        botCount.textContent = `${activeBots}/3 bots used`;
-      }
+      try {
+        const data = await apiFetch(`/api/bots/${user.id}`);
+        const totalBots = data?.bots || [];
+        const activeBots = totalBots.length;
 
-      if (!botList) return;
-      if (!activeBots) {
-        botList.innerHTML = '<div class="empty-state">No bots created yet. Add your first bot below.</div>';
-        return;
-      }
+        if (botCount) {
+          botCount.textContent = `${activeBots}/3 bots used`;
+        }
 
-      botList.innerHTML = totalBots.map((bot) => {
-        const enabledModules = Object.entries(bot.modules || {})
-          .filter(([, value]) => value)
-          .map(([key]) => key)
-          .join(', ') || 'No modules enabled';
+        if (!botList) return;
+        if (!activeBots) {
+          botList.innerHTML = '<div class="empty-state">No bots created yet. Add your first bot below.</div>';
+          return;
+        }
 
-        return `
-          <article class="bot-card" data-bot-id="${bot.id}">
-            <div class="bot-header">
-              <div>
-                <h3>${bot.name}</h3>
-                <p class="bot-token">Token: ${bot.token.slice(0, 12)}••••••</p>
+        botList.innerHTML = totalBots.map((bot) => {
+          const enabledModules = Object.entries(bot.modules || {})
+            .filter(([, value]) => value)
+            .map(([key]) => key)
+            .join(', ') || 'No modules enabled';
+
+          return `
+            <article class="bot-card" data-bot-id="${bot.id}">
+              <div class="bot-header">
+                <div>
+                  <h3>${bot.name}</h3>
+                  <p class="bot-token">Token: ${bot.token.slice(0, 12)}••••••</p>
+                </div>
+                <button type="button" class="button button-secondary small-button" data-delete-bot="${bot.id}">Delete</button>
               </div>
-              <button type="button" class="button button-secondary small-button" data-delete-bot="${bot.id}">Delete</button>
-            </div>
-            <div class="bot-meta">
-              <span>Owner: ${user.username}</span>
-              <span>Created: ${new Date(bot.createdAt).toLocaleDateString()}</span>
-            </div>
-            <div class="module-list">
-              <strong>Modules</strong>
-              <p>${enabledModules}</p>
-            </div>
-          </article>
-        `;
-      }).join('');
+              <div class="bot-meta">
+                <span>Owner: ${user.username}</span>
+                <span>Created: ${new Date(bot.createdAt).toLocaleDateString()}</span>
+              </div>
+              <div class="module-list">
+                <strong>Modules</strong>
+                <p>${enabledModules}</p>
+              </div>
+            </article>
+          `;
+        }).join('');
+      } catch (error) {
+        if (botCount) {
+          botCount.textContent = '0/3 bots used';
+        }
+        if (botList) {
+          botList.innerHTML = `<div class="empty-state">${error.message}</div>`;
+        }
+      }
     }
 
-    function renderAuthState() {
+    async function renderAuthState() {
       const guestView = document.getElementById('guest-view');
       const dashboardView = document.getElementById('dashboard-view');
       const session = getSession();
-      const user = session ? (botHosting.getUserById ? botHosting.getUserById(session.id) : null) : null;
+      const user = session ? {
+        id: session.id,
+        username: session.username,
+        email: session.email,
+        avatar: session.avatar,
+        googleAuth: Boolean(session.googleAuth),
+      } : null;
 
       if (guestView && dashboardView) {
         if (!user) {
@@ -356,14 +399,14 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         if (accountInfo) {
-          accountInfo.textContent = `Signed in as ${user.username} • ${user.email}`;
+          accountInfo.textContent = `Signed in as ${user.username} • ${user.email}${user.googleAuth ? ' • Google Account' : ''}`;
         }
 
-        renderBotList(user);
+        await renderBotList(user);
       }
     }
 
-    function handleSignup(event) {
+    async function handleSignup(event) {
       event.preventDefault();
       const form = event.currentTarget;
       const formData = new FormData(form);
@@ -372,10 +415,13 @@ document.addEventListener('DOMContentLoaded', () => {
       const password = String(formData.get('signupPassword') || '');
 
       try {
-        const user = botHosting.createUser({ username, email, password });
-        setSession(user);
+        const result = await apiFetch('/api/auth/signup', {
+          method: 'POST',
+          body: JSON.stringify({ username, email, password }),
+        });
+        setSession(result.user, result.token);
         form.reset();
-        renderAuthState();
+        await renderAuthState();
       } catch (error) {
         const message = document.getElementById('signup-status');
         if (message) {
@@ -384,7 +430,7 @@ document.addEventListener('DOMContentLoaded', () => {
       }
     }
 
-    function handleLogin(event) {
+    async function handleLogin(event) {
       event.preventDefault();
       const form = event.currentTarget;
       const formData = new FormData(form);
@@ -392,10 +438,13 @@ document.addEventListener('DOMContentLoaded', () => {
       const password = String(formData.get('loginPassword') || '');
 
       try {
-        const user = botHosting.loginUser(username, password);
-        setSession(user);
+        const result = await apiFetch('/api/auth/login', {
+          method: 'POST',
+          body: JSON.stringify({ usernameOrEmail: username, password }),
+        });
+        setSession(result.user, result.token);
         form.reset();
-        renderAuthState();
+        await renderAuthState();
       } catch (error) {
         const message = document.getElementById('login-status');
         if (message) {
@@ -409,10 +458,16 @@ document.addEventListener('DOMContentLoaded', () => {
       renderAuthState();
     }
 
-    function handleCreateBot(event) {
+    async function handleCreateBot(event) {
       event.preventDefault();
       const session = getSession();
-      const user = session ? (botHosting.getUserById ? botHosting.getUserById(session.id) : null) : null;
+      const user = session ? {
+        id: session.id,
+        username: session.username,
+        email: session.email,
+        avatar: session.avatar,
+        googleAuth: Boolean(session.googleAuth),
+      } : null;
 
       if (!user) {
         return;
@@ -426,9 +481,12 @@ document.addEventListener('DOMContentLoaded', () => {
       const modules = Object.fromEntries(BOT_MODULES.map((moduleName) => [moduleName, checkedModules.includes(moduleName)]));
 
       try {
-        botHosting.createBotForUser(user.id, { name, token, modules });
+        await apiFetch('/api/bots', {
+          method: 'POST',
+          body: JSON.stringify({ userId: user.id, name, token, modules }),
+        });
         form.reset();
-        renderAuthState();
+        await renderAuthState();
         const botStatus = document.getElementById('bot-status');
         if (botStatus) {
           botStatus.textContent = 'Bot hosted successfully to your account.';
@@ -441,15 +499,28 @@ document.addEventListener('DOMContentLoaded', () => {
       }
     }
 
-    function handleDeleteBot(event) {
+    async function handleDeleteBot(event) {
       const session = getSession();
-      const user = session ? (botHosting.getUserById ? botHosting.getUserById(session.id) : null) : null;
+      const user = session ? {
+        id: session.id,
+        username: session.username,
+        email: session.email,
+        avatar: session.avatar,
+        googleAuth: Boolean(session.googleAuth),
+      } : null;
       const button = event.target.closest('[data-delete-bot]');
       if (!button || !user) return;
 
       const botId = button.getAttribute('data-delete-bot');
-      botHosting.deleteBotForUser(user.id, botId);
-      renderAuthState();
+      try {
+        await apiFetch(`/api/bots/${user.id}/${botId}`, { method: 'DELETE' });
+        await renderAuthState();
+      } catch (error) {
+        const botStatus = document.getElementById('bot-status');
+        if (botStatus) {
+          botStatus.textContent = error.message;
+        }
+      }
     }
 
     const signupForm = document.getElementById('signup-form');
@@ -468,6 +539,40 @@ document.addEventListener('DOMContentLoaded', () => {
     if (createBotForm) createBotForm.addEventListener('submit', handleCreateBot);
     if (logoutButton) logoutButton.addEventListener('click', handleLogout);
     if (botList) botList.addEventListener('click', handleDeleteBot);
+
+    const googleButton = document.getElementById('google-signin-button');
+    if (googleButton) {
+      const clientId = document.querySelector('meta[name="google-signin-client_id"]')?.getAttribute('content') || '';
+      if (clientId) {
+        window.google?.accounts?.id?.initialize({
+          client_id: clientId,
+          callback: async (response) => {
+            try {
+              const result = await apiFetch('/api/auth/google', {
+                method: 'POST',
+                body: JSON.stringify({ credential: response.credential }),
+              });
+              setSession(result.user, result.token);
+              await renderAuthState();
+            } catch (error) {
+              const message = document.getElementById('login-status');
+              if (message) {
+                message.textContent = error.message;
+              }
+            }
+          },
+        });
+
+        window.google.accounts.id.renderButton(googleButton, {
+          theme: 'outline',
+          size: 'large',
+          text: 'continue_with',
+          shape: 'pill',
+        });
+      } else {
+        googleButton.innerHTML = '<div class="status-text">Add your Google Client ID in the page head to enable Google sign in.</div>';
+      }
+    }
 
     renderAuthState();
   }

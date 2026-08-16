@@ -15,6 +15,7 @@
       href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap"
       rel="stylesheet"
     />
+    <meta name="google-signin-client_id" content="" />
     <link rel="stylesheet" href="styles.css" />
   </head>
   <body>
@@ -95,6 +96,10 @@
                   <button type="submit" class="button button-secondary">Log In</button>
                   <div id="login-status" class="status-text" aria-live="polite"></div>
                 </form>
+
+                <div class="google-auth-row">
+                  <div id="google-signin-button"></div>
+                </div>
               </div>
             </div>
 
@@ -162,6 +167,7 @@
       </footer>
     </div>
 
+    <script src="https://accounts.google.com/gsi/client" async defer></script>
     <script src="bot-hosting.js"></script>
     <script src="script.js"></script>
   </body>
