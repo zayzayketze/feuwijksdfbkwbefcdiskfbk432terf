@@ -6,65 +6,86 @@ const createCursorEffect = () => {
   document.body.insertBefore(canvas, document.body.firstChild);
 
   const ctx = canvas.getContext('2d');
-  canvas.width = window.innerWidth;
-  canvas.height = window.innerHeight;
+  const gridSize = 34;
 
-  let mouseX = canvas.width / 2;
-  let mouseY = canvas.height / 2;
-  const particles = [];
+  let width = window.innerWidth;
+  let height = window.innerHeight;
+  let mouseX = width / 2;
+  let mouseY = height / 2;
+  let targetX = mouseX;
+  let targetY = mouseY;
 
-  class Particle {
-    constructor(x, y) {
-      this.x = x;
-      this.y = y;
-      this.baseX = x;
-      this.baseY = y;
-      this.vx = (Math.random() - 0.5) * 3;
-      this.vy = (Math.random() - 0.5) * 3;
-      this.life = 1;
-      this.decay = Math.random() * 0.02 + 0.008;
-    }
+  canvas.width = width;
+  canvas.height = height;
 
-    update(mouseX, mouseY) {
-      const dx = mouseX - this.x;
-      const dy = mouseY - this.y;
-      const distance = Math.sqrt(dx * dx + dy * dy);
-      const repelRange = 180;
+  const points = [];
+  const cols = Math.ceil(width / gridSize) + 2;
+  const rows = Math.ceil(height / gridSize) + 2;
 
-      if (distance < repelRange) {
-        const angle = Math.atan2(dy, dx);
-        const repelForce = (1 - distance / repelRange) * 0.7;
-        this.vx -= Math.cos(angle) * repelForce;
-        this.vy -= Math.sin(angle) * repelForce;
-      }
-
-      this.x += this.vx;
-      this.y += this.vy;
-      this.vx *= 0.92;
-      this.vy *= 0.92;
-      this.life -= this.decay;
-    }
-
-    draw(ctx) {
-      ctx.globalAlpha = Math.max(0, this.life * 0.4);
-      ctx.strokeStyle = 'rgba(168, 139, 250, 0.6)';
-      ctx.lineWidth = 1;
-      ctx.beginPath();
-      ctx.moveTo(this.baseX, this.baseY);
-      ctx.lineTo(this.x, this.y);
-      ctx.stroke();
+  for (let row = 0; row < rows; row++) {
+    for (let col = 0; col < cols; col++) {
+      points.push({
+        baseX: col * gridSize,
+        baseY: row * gridSize,
+        x: col * gridSize,
+        y: row * gridSize,
+        vx: 0,
+        vy: 0,
+      });
     }
   }
 
-  const animate = () => {
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
-    ctx.globalAlpha = 1;
+  const drawLine = (a, b) => {
+    ctx.beginPath();
+    ctx.moveTo(a.x, a.y);
+    ctx.lineTo(b.x, b.y);
+    ctx.stroke();
+  };
 
-    for (let i = particles.length - 1; i >= 0; i--) {
-      particles[i].update(mouseX, mouseY);
-      particles[i].draw(ctx);
-      if (particles[i].life <= 0) {
-        particles.splice(i, 1);
+  const animate = () => {
+    mouseX += (targetX - mouseX) * 0.12;
+    mouseY += (targetY - mouseY) * 0.12;
+
+    ctx.clearRect(0, 0, width, height);
+    ctx.lineWidth = 1;
+    ctx.strokeStyle = 'rgba(196, 181, 253, 0.24)';
+
+    for (let i = 0; i < points.length; i++) {
+      const point = points[i];
+      const dx = mouseX - point.x;
+      const dy = mouseY - point.y;
+      const distance = Math.hypot(dx, dy);
+      const influenceRadius = 170;
+
+      if (distance < influenceRadius) {
+        const angle = Math.atan2(dy, dx);
+        const force = (1 - distance / influenceRadius) * 3.2;
+        point.vx += Math.cos(angle) * force * 1.6;
+        point.vy += Math.sin(angle) * force * 1.6;
+      }
+
+      const springX = (point.baseX - point.x) * 0.04;
+      const springY = (point.baseY - point.y) * 0.04;
+      point.vx += springX;
+      point.vy += springY;
+      point.vx *= 0.8;
+      point.vy *= 0.8;
+      point.x += point.vx;
+      point.y += point.vy;
+    }
+
+    for (let row = 0; row < rows; row++) {
+      for (let col = 0; col < cols; col++) {
+        const idx = row * cols + col;
+        const point = points[idx];
+
+        if (col < cols - 1) {
+          drawLine(point, points[idx + 1]);
+        }
+
+        if (row < rows - 1) {
+          drawLine(point, points[idx + cols]);
+        }
       }
     }
 
@@ -72,20 +93,24 @@ const createCursorEffect = () => {
   };
 
   document.addEventListener('mousemove', (e) => {
-    mouseX = e.clientX;
-    mouseY = e.clientY;
+    targetX = e.clientX;
+    targetY = e.clientY;
+  });
 
-    for (let i = 0; i < 3; i++) {
-      particles.push(new Particle(
-        mouseX + (Math.random() - 0.5) * 25,
-        mouseY + (Math.random() - 0.5) * 25
-      ));
-    }
+  document.addEventListener('mouseleave', () => {
+    targetX = width / 2;
+    targetY = height / 2;
   });
 
   window.addEventListener('resize', () => {
-    canvas.width = window.innerWidth;
-    canvas.height = window.innerHeight;
+    width = window.innerWidth;
+    height = window.innerHeight;
+    canvas.width = width;
+    canvas.height = height;
+    targetX = width / 2;
+    targetY = height / 2;
+    mouseX = targetX;
+    mouseY = targetY;
   });
 
   animate();
