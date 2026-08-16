@@ -10,6 +10,12 @@
   --primary-strong: #92b0ff;
   --accent: #7ef0d4;
   --shadow: rgba(2, 6, 23, 0.75);
+  --discord-bg: #2b2d31;
+  --discord-panel: #303338;
+  --discord-panel-alt: #2f3136;
+  --discord-border: rgba(255, 255, 255, 0.08);
+  --discord-blurple: #5865f2;
+  --discord-accent: #b7c2ff;
 }
 
 * {
@@ -273,10 +279,11 @@ a {
 
 .server-card {
   width: min(100%, 480px);
-  border: 1px solid var(--line);
-  background: linear-gradient(180deg, rgba(18, 24, 35, 0.9), rgba(10, 16, 26, 0.9));
-  border-radius: 26px;
-  box-shadow: 0 20px 50px rgba(2, 6, 23, 0.6);
+  border: 1px solid var(--discord-border);
+  border-left: 4px solid var(--discord-blurple);
+  background: linear-gradient(180deg, rgba(47, 49, 54, 0.96), rgba(35, 39, 42, 0.98));
+  border-radius: 14px;
+  box-shadow: none;
   overflow: hidden;
 }
 
@@ -285,8 +292,8 @@ a {
   align-items: center;
   gap: 10px;
   padding: 18px 22px;
-  border-bottom: 1px solid var(--line);
-  background: rgba(124, 156, 255, 0.05);
+  border-bottom: 1px solid var(--discord-border);
+  background: rgba(88, 101, 242, 0.08);
   color: var(--text);
   font-weight: 600;
 }
@@ -328,9 +335,9 @@ a {
   flex-direction: column;
   gap: 6px;
   padding: 16px 14px;
-  border: 1px solid var(--line);
-  border-radius: 16px;
-  background: rgba(148, 163, 184, 0.02);
+  border: 1px solid var(--discord-border);
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.02);
 }
 
 .stat-value {
@@ -369,10 +376,11 @@ a {
 
 .feature-card {
   padding: 28px 22px;
-  border: 1px solid var(--line);
-  border-radius: 22px;
-  background: linear-gradient(180deg, rgba(14, 20, 32, 0.92), rgba(11, 16, 27, 0.92));
-  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.03);
+  border: 1px solid var(--discord-border);
+  border-left: 4px solid var(--discord-blurple);
+  border-radius: 14px;
+  background: linear-gradient(180deg, rgba(47, 49, 54, 0.96), rgba(35, 39, 42, 0.98));
+  box-shadow: none;
 }
 
 .icon {
@@ -411,9 +419,10 @@ a {
   grid-template-columns: repeat(4, minmax(0, 1fr));
   gap: 18px;
   padding: 26px 18px;
-  border: 1px solid var(--line);
-  border-radius: 22px;
-  background: rgba(11, 17, 28, 0.9);
+  border: 1px solid var(--discord-border);
+  border-left: 4px solid var(--discord-blurple);
+  border-radius: 14px;
+  background: linear-gradient(180deg, rgba(47, 49, 54, 0.96), rgba(35, 39, 42, 0.98));
 }
 
 .stat-bar div {
@@ -440,9 +449,10 @@ a {
 
 .community-panel,
 .quote-card {
-  border: 1px solid var(--line);
-  border-radius: 22px;
-  background: linear-gradient(180deg, rgba(15, 22, 35, 0.9), rgba(8, 12, 22, 0.9));
+  border: 1px solid var(--discord-border);
+  border-left: 4px solid var(--discord-blurple);
+  border-radius: 14px;
+  background: linear-gradient(180deg, rgba(47, 49, 54, 0.96), rgba(35, 39, 42, 0.98));
   padding: 28px 24px;
 }
 
@@ -499,16 +509,17 @@ a {
 }
 
 .faq-item {
-  border: 1px solid var(--line);
-  border-radius: 18px;
+  border: 1px solid var(--discord-border);
+  border-left: 4px solid var(--discord-blurple);
+  border-radius: 14px;
   overflow: hidden;
-  background: rgba(13, 18, 28, 0.85);
-  transition: all 0.3s ease;
+  background: rgba(47, 49, 54, 0.8);
+  transition: all 0.2s ease;
 }
 
 .faq-item:hover {
-  border-color: rgba(124, 156, 255, 0.3);
-  background: rgba(15, 22, 35, 0.95);
+  border-color: rgba(88, 101, 242, 0.5);
+  background: rgba(54, 57, 63, 0.9);
 }
 
 .faq-toggle {
@@ -591,14 +602,15 @@ a {
 .community-panel,
 .quote-card,
 .discord-rule-card,
-.rule-item {
+.rule-item,
+.staff-card {
   position: relative;
   overflow: hidden;
-  border: 1px solid rgba(113, 128, 255, 0.22);
-  border-left: 4px solid rgba(113, 128, 255, 0.95);
-  border-radius: 18px;
+  border: 1px solid var(--discord-border);
+  border-left: 4px solid var(--discord-blurple);
+  border-radius: 14px;
   background: linear-gradient(180deg, rgba(47, 49, 54, 0.96), rgba(35, 39, 42, 0.98));
-  box-shadow: 0 12px 26px rgba(0, 0, 0, 0.22);
+  box-shadow: none;
   transition: transform 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
 }
 
@@ -617,11 +629,12 @@ a {
 .community-panel::before,
 .quote-card::before,
 .discord-rule-card::before,
-.rule-item::before {
+.rule-item::before,
+.staff-card::before {
   content: "";
   position: absolute;
   inset: 0;
-  background: linear-gradient(90deg, rgba(113, 128, 255, 0.08), transparent 32%);
+  background: linear-gradient(90deg, rgba(88, 101, 242, 0.08), transparent 30%);
   pointer-events: none;
 }
 
@@ -640,10 +653,11 @@ a {
 .community-panel:hover,
 .quote-card:hover,
 .discord-rule-card:hover,
-.rule-item:hover {
+.rule-item:hover,
+.staff-card:hover {
   transform: translateY(-2px);
-  border-color: rgba(126, 240, 212, 0.32);
-  box-shadow: 0 16px 30px rgba(0, 0, 0, 0.26);
+  border-color: rgba(124, 156, 255, 0.45);
+  box-shadow: 0 10px 18px rgba(0, 0, 0, 0.14);
 }
 
 .server-card,
@@ -872,16 +886,17 @@ a {
 
 .highlight-card {
   padding: 28px 22px;
-  border: 1px solid var(--line);
-  border-radius: 22px;
-  background: linear-gradient(180deg, rgba(14, 20, 32, 0.92), rgba(11, 16, 27, 0.92));
-  transition: all 0.3s ease;
+  border: 1px solid var(--discord-border);
+  border-left: 4px solid var(--discord-blurple);
+  border-radius: 14px;
+  background: linear-gradient(180deg, rgba(47, 49, 54, 0.96), rgba(35, 39, 42, 0.98));
+  transition: all 0.2s ease;
 }
 
 .highlight-card:hover {
-  border-color: rgba(124, 156, 255, 0.3);
-  background: linear-gradient(180deg, rgba(18, 26, 40, 0.95), rgba(14, 20, 32, 0.95));
-  transform: translateY(-4px);
+  border-color: rgba(124, 156, 255, 0.45);
+  background: linear-gradient(180deg, rgba(54, 57, 63, 0.96), rgba(42, 43, 47, 0.98));
+  transform: translateY(-2px);
 }
 
 .highlight-icon {
@@ -917,9 +932,10 @@ a {
 
 .detail-card {
   padding: 28px 24px;
-  border: 1px solid var(--line);
-  border-radius: 22px;
-  background: linear-gradient(180deg, rgba(15, 22, 35, 0.9), rgba(8, 12, 22, 0.9));
+  border: 1px solid var(--discord-border);
+  border-left: 4px solid var(--discord-blurple);
+  border-radius: 14px;
+  background: linear-gradient(180deg, rgba(47, 49, 54, 0.96), rgba(35, 39, 42, 0.98));
 }
 
 .detail-card h3 {
@@ -942,16 +958,17 @@ a {
 
 .step-card {
   padding: 28px 24px;
-  border: 1px solid var(--line);
-  border-radius: 22px;
-  background: linear-gradient(180deg, rgba(15, 22, 35, 0.9), rgba(8, 12, 22, 0.9));
+  border: 1px solid var(--discord-border);
+  border-left: 4px solid var(--discord-blurple);
+  border-radius: 14px;
+  background: linear-gradient(180deg, rgba(47, 49, 54, 0.96), rgba(35, 39, 42, 0.98));
   text-align: center;
-  transition: all 0.3s ease;
+  transition: all 0.2s ease;
 }
 
 .step-card:hover {
-  border-color: rgba(124, 156, 255, 0.3);
-  background: linear-gradient(180deg, rgba(18, 26, 40, 0.95), rgba(14, 20, 32, 0.95));
+  border-color: rgba(124, 156, 255, 0.45);
+  background: linear-gradient(180deg, rgba(54, 57, 63, 0.96), rgba(42, 43, 47, 0.98));
 }
 
 .step-number {
@@ -990,9 +1007,10 @@ a {
 
 .info-card {
   padding: 24px 20px;
-  border: 1px solid var(--line);
-  border-radius: 18px;
-  background: rgba(13, 18, 28, 0.85);
+  border: 1px solid var(--discord-border);
+  border-left: 4px solid var(--discord-blurple);
+  border-radius: 14px;
+  background: linear-gradient(180deg, rgba(47, 49, 54, 0.96), rgba(35, 39, 42, 0.98));
   text-align: center;
 }
 
@@ -1025,9 +1043,10 @@ a {
 
 .requirement-list {
   padding: 28px 24px;
-  border: 1px solid var(--line);
-  border-radius: 22px;
-  background: linear-gradient(180deg, rgba(15, 22, 35, 0.9), rgba(8, 12, 22, 0.9));
+  border: 1px solid var(--discord-border);
+  border-left: 4px solid var(--discord-blurple);
+  border-radius: 14px;
+  background: linear-gradient(180deg, rgba(47, 49, 54, 0.96), rgba(35, 39, 42, 0.98));
 }
 
 .requirement-list h3 {
@@ -1061,6 +1080,60 @@ a {
   background: linear-gradient(135deg, var(--primary), var(--accent));
 }
 
+.staff-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 22px;
+}
+
+.staff-card {
+  display: flex;
+  align-items: flex-start;
+  gap: 18px;
+  padding: 28px 24px;
+  border: 1px solid var(--discord-border);
+  border-left: 4px solid var(--discord-blurple);
+  border-radius: 14px;
+  background: linear-gradient(180deg, rgba(47, 49, 54, 0.96), rgba(35, 39, 42, 0.98));
+}
+
+.staff-avatar {
+  width: 58px;
+  height: 58px;
+  display: grid;
+  place-items: center;
+  border-radius: 18px;
+  background: linear-gradient(135deg, rgba(124, 156, 255, 0.2), rgba(126, 240, 212, 0.15));
+  color: var(--accent);
+  font-size: 1.5rem;
+  font-weight: 800;
+  flex-shrink: 0;
+}
+
+.staff-body {
+  flex: 1;
+}
+
+.staff-role {
+  display: inline-block;
+  margin-bottom: 8px;
+  font-size: 0.72rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--accent);
+}
+
+.staff-card h3 {
+  margin: 0 0 10px;
+  font-size: 1.2rem;
+}
+
+.staff-card p {
+  margin: 0;
+  color: var(--muted);
+  line-height: 1.75;
+}
+
 .contact-options {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
@@ -1069,9 +1142,10 @@ a {
 
 .contact-card {
   padding: 28px 24px;
-  border: 1px solid var(--line);
-  border-radius: 22px;
-  background: linear-gradient(180deg, rgba(15, 22, 35, 0.9), rgba(8, 12, 22, 0.9));
+  border: 1px solid var(--discord-border);
+  border-left: 4px solid var(--discord-blurple);
+  border-radius: 14px;
+  background: linear-gradient(180deg, rgba(47, 49, 54, 0.96), rgba(35, 39, 42, 0.98));
   text-align: center;
 }
 
@@ -1100,9 +1174,10 @@ a {
 
 .testimonial-card {
   padding: 28px 24px;
-  border: 1px solid var(--line);
-  border-radius: 22px;
-  background: linear-gradient(180deg, rgba(15, 22, 35, 0.9), rgba(8, 12, 22, 0.9));
+  border: 1px solid var(--discord-border);
+  border-left: 4px solid var(--discord-blurple);
+  border-radius: 14px;
+  background: linear-gradient(180deg, rgba(47, 49, 54, 0.96), rgba(35, 39, 42, 0.98));
 }
 
 .testimonial-card .stars {
@@ -1133,9 +1208,10 @@ a {
 
 .disclosure-content > div {
   padding: 28px 24px;
-  border: 1px solid var(--line);
-  border-radius: 22px;
-  background: linear-gradient(180deg, rgba(15, 22, 35, 0.9), rgba(8, 12, 22, 0.9));
+  border: 1px solid var(--discord-border);
+  border-left: 4px solid var(--discord-blurple);
+  border-radius: 14px;
+  background: linear-gradient(180deg, rgba(47, 49, 54, 0.96), rgba(35, 39, 42, 0.98));
 }
 
 .disclosure-content h3 {
@@ -1155,10 +1231,11 @@ a {
   justify-content: space-between;
   gap: 20px;
   padding: 28px 30px;
-  border: 1px solid var(--line);
-  border-radius: 22px;
-  background: linear-gradient(135deg, rgba(124, 156, 255, 0.1), rgba(126, 240, 212, 0.06));
-  transition: all 0.3s ease;
+  border: 1px solid var(--discord-border);
+  border-left: 4px solid var(--discord-blurple);
+  border-radius: 14px;
+  background: linear-gradient(180deg, rgba(47, 49, 54, 0.96), rgba(35, 39, 42, 0.98));
+  transition: all 0.2s ease;
 }
 
 .cta-panel:hover {
@@ -1176,9 +1253,10 @@ a {
 .cta-box {
   text-align: center;
   padding: 48px;
-  border: 2px solid rgba(124, 156, 255, 0.3);
-  border-radius: 28px;
-  background: linear-gradient(135deg, rgba(124, 156, 255, 0.12), rgba(126, 240, 212, 0.08));
+  border: 1px solid var(--discord-border);
+  border-left: 4px solid var(--discord-blurple);
+  border-radius: 14px;
+  background: linear-gradient(180deg, rgba(47, 49, 54, 0.96), rgba(35, 39, 42, 0.98));
 }
 
 .cta-box h2 {
@@ -1205,6 +1283,7 @@ a {
   .highlights-grid,
   .steps-grid,
   .contact-options,
+  .staff-grid,
   .info-grid {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
@@ -1241,6 +1320,7 @@ a {
   .faq-grid,
   .highlights-grid,
   .steps-grid,
+  .staff-grid,
   .contact-options,
   .info-grid,
   .detail-grid,
