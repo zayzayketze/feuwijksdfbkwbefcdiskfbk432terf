@@ -29,12 +29,12 @@ html {
 
 body {
   margin: 0;
+  padding: 0;
   font-family: "Inter", sans-serif;
-  background:
-    radial-gradient(circle at top, rgba(124, 58, 237, 0.14), transparent 32%),
-    radial-gradient(circle at bottom right, rgba(168, 139, 250, 0.04), transparent 25%),
-    linear-gradient(180deg, #0a0d12 0%, #131a26 100%);
+  background: linear-gradient(180deg, #0a0e14 0%, #131a26 100%);
+  background-attachment: fixed;
   color: var(--text);
+  min-height: 100vh;
 }
 
 img {
@@ -847,7 +847,7 @@ a {
 
 .footer {
   border-top: 1px solid var(--line);
-  background: rgba(4, 8, 14, 0.9);
+  background: linear-gradient(180deg, rgba(10, 14, 20, 0.95), rgba(18, 24, 33, 0.98));
 }
 
 .footer-inner {
@@ -883,11 +883,11 @@ a {
   transition: all 0.2s ease;
   padding: 8px 12px;
   border-radius: 8px;
-  border: 1px solid rgba(124, 156, 255, 0.2);
+  border: 1px solid rgba(168, 139, 250, 0.2);
 }
 
 .footer-socials a:hover {
-  background: rgba(124, 156, 255, 0.1);
+  background: rgba(168, 139, 250, 0.1);
   border-color: var(--primary);
   color: var(--primary-strong);
 }
