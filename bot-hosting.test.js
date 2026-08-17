@@ -68,3 +68,24 @@ test('hosted bots retain a GitHub repo link when provided', () => {
   assert.equal(bot.githubRepo, 'https://github.com/voidhaven/bot-github-bot');
   assert.equal(listUserBots(user.id)[0].githubRepo, 'https://github.com/voidhaven/bot-github-bot');
 });
+
+test('hosted bot module runtime includes selected features and the required custom status', async () => {
+  const vpsWorker = require('./vps-worker/index.js');
+
+  const runtime = vpsWorker.buildModuleRuntime({
+    moderation: true,
+    antiSpam: true,
+    welcome: true,
+    music: true,
+    status: true,
+  });
+
+  const statusText = vpsWorker.getHostedBotStatusText();
+
+  assert.ok(runtime.some((moduleInfo) => moduleInfo.name === 'moderation'));
+  assert.ok(runtime.some((moduleInfo) => moduleInfo.name === 'antiSpam'));
+  assert.ok(runtime.some((moduleInfo) => moduleInfo.name === 'welcome'));
+  assert.ok(runtime.some((moduleInfo) => moduleInfo.name === 'music'));
+  assert.ok(runtime.some((moduleInfo) => moduleInfo.name === 'status'));
+  assert.equal(statusText, 'Powered by VoidHaven Hosting');
+});
