@@ -7,7 +7,8 @@ const { v4: uuidv4 } = require('uuid');
 const http = require('http');
 const https = require('https');
 
-dotenv.config();
+const envPath = path.resolve(__dirname, '..', '.env');
+dotenv.config({ path: envPath, override: true });
 
 const app = express();
 const PORT = process.env.PORT || 3000;

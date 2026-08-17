@@ -183,6 +183,105 @@ document.addEventListener('DOMContentLoaded', () => {
       throw lastError || new Error('Request failed.');
     }
 
+    function getLocalFallbackAuthResult(type, payload) {
+      const host = window.botHosting;
+      if (!host) {
+        return null;
+      }
+
+      if (type === 'signup') {
+        const user = host.createUser({
+          username: payload.username,
+          email: payload.email,
+          password: payload.password,
+        });
+
+        return {
+          user: {
+            id: user.id,
+            username: user.username,
+            email: user.email,
+            avatar: user.avatar || '',
+            googleAuth: false,
+          },
+          token: `voidhaven-session-${user.id}`,
+        };
+      }
+
+      if (type === 'login') {
+        const user = host.loginUser(payload.usernameOrEmail, payload.password);
+        return {
+          user: {
+            id: user.id,
+            username: user.username,
+            email: user.email,
+            avatar: '',
+            googleAuth: false,
+          },
+          token: `voidhaven-session-${user.id}`,
+        };
+      }
+
+      return null;
+    }
+
+    async function authRequest(path, payload, fallbackType) {
+      try {
+        return await apiFetch(path, {
+          method: 'POST',
+          body: JSON.stringify(payload),
+        });
+      } catch (error) {
+        const fallback = getLocalFallbackAuthResult(fallbackType, payload);
+        if (fallback) {
+          return fallback;
+        }
+        throw error;
+      }
+    }
+
+    async function botRequest(method, path, payload) {
+      try {
+        return await apiFetch(path, {
+          method,
+          body: payload ? JSON.stringify(payload) : undefined,
+        });
+      } catch (error) {
+        if (!window.botHosting) {
+          throw error;
+        }
+
+        if (method === 'POST' && path === '/api/bots') {
+          const bot = window.botHosting.createBotForUser(payload.userId, {
+            name: payload.name,
+            token: payload.token,
+            modules: payload.modules || {},
+            githubRepo: payload.githubRepo || '',
+          });
+          return { bot, bots: window.botHosting.listUserBots(payload.userId) };
+        }
+
+        if (method === 'DELETE') {
+          const match = path.match(/^\/api\/bots\/([^/]+)\/([^/]+)$/);
+          if (match) {
+            const [, userId, botId] = match;
+            const deleted = window.botHosting.deleteBotForUser(userId, botId);
+            return { deleted, bots: window.botHosting.listUserBots(userId) };
+          }
+        }
+
+        if (method === 'GET') {
+          const match = path.match(/^\/api\/bots\/([^/]+)$/);
+          if (match) {
+            const [, userId] = match;
+            return { bots: window.botHosting.listUserBots(userId) };
+          }
+        }
+
+        throw error;
+      }
+    }
+
     function renderModuleOptions(selectedModules = {}) {
       return BOT_MODULES.map((moduleName) => {
         const checked = Boolean(selectedModules[moduleName]);
@@ -235,7 +334,7 @@ document.addEventListener('DOMContentLoaded', () => {
       const botCount = document.getElementById('bot-count');
 
       try {
-        const data = await apiFetch(`/api/bots/${user.id}`);
+        const data = await botRequest('GET', `/api/bots/${user.id}`);
         const totalBots = data?.bots || [];
         const activeBots = totalBots.length;
 
@@ -333,17 +432,15 @@ document.addEventListener('DOMContentLoaded', () => {
       const username = String(formData.get('signupUsername') || '').trim();
       const email = String(formData.get('signupEmail') || '').trim();
       const password = String(formData.get('signupPassword') || '');
+      const statusId = form.id === 'bot-signup-form' ? 'bot-signup-status' : 'signup-status';
 
       try {
-        const result = await apiFetch('/api/auth/signup', {
-          method: 'POST',
-          body: JSON.stringify({ username, email, password }),
-        });
+        const result = await authRequest('/api/auth/signup', { username, email, password }, 'signup');
         setSession(result.user, result.token);
         form.reset();
         await renderAuthState();
       } catch (error) {
-        const message = document.getElementById('signup-status');
+        const message = document.getElementById(statusId) || document.getElementById('signup-status') || document.getElementById('bot-signup-status');
         if (message) {
           message.textContent = error.message;
         }
@@ -356,17 +453,15 @@ document.addEventListener('DOMContentLoaded', () => {
       const formData = new FormData(form);
       const username = String(formData.get('loginUsername') || '').trim();
       const password = String(formData.get('loginPassword') || '');
+      const statusId = form.id === 'bot-login-form' ? 'bot-login-status' : 'login-status';
 
       try {
-        const result = await apiFetch('/api/auth/login', {
-          method: 'POST',
-          body: JSON.stringify({ usernameOrEmail: username, password }),
-        });
+        const result = await authRequest('/api/auth/login', { usernameOrEmail: username, password }, 'login');
         setSession(result.user, result.token);
         form.reset();
         await renderAuthState();
       } catch (error) {
-        const message = document.getElementById('login-status');
+        const message = document.getElementById(statusId) || document.getElementById('login-status') || document.getElementById('bot-login-status');
         if (message) {
           message.textContent = error.message;
         }
@@ -411,9 +506,12 @@ document.addEventListener('DOMContentLoaded', () => {
       const modules = Object.fromEntries(BOT_MODULES.map((moduleName) => [moduleName, checkedModules.includes(moduleName)]));
 
       try {
-        await apiFetch('/api/bots', {
-          method: 'POST',
-          body: JSON.stringify({ userId: user.id, name: 'Discord Bot', token, modules, githubRepo }),
+        await botRequest('POST', '/api/bots', {
+          userId: user.id,
+          name: 'Discord Bot',
+          token,
+          modules,
+          githubRepo,
         });
         form.reset();
         await renderAuthState();
@@ -444,7 +542,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
       const botId = button.getAttribute('data-delete-bot');
       try {
-        await apiFetch(`/api/bots/${user.id}/${botId}`, { method: 'DELETE' });
+        await botRequest('DELETE', `/api/bots/${user.id}/${botId}`);
         await renderAuthState();
       } catch (error) {
         const botStatus = document.getElementById('bot-status');
